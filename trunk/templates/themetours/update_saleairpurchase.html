@@ -1,0 +1,47 @@
+<form id="id_air_purchase" method="post">{% csrf_token %}
+{% for form in purchaseForm %}
+<table>
+  <th>
+    {{ form.purchase_transaction_no.label_tag }}
+  </th>
+  <td>
+    {{ form.purchase_transaction_no.value }}
+    {{ form.purchase_transaction_no }}
+  </td>
+</tr>
+<tr>
+  <th> {{ form.supplier.label_tag }}</th>
+  <td> {{ form.supplier }}</td>
+</tr>
+<tr>
+  <th> {{ form.service_tax.label_tag }} </th>
+  <td> {{ form.service_tax }} </td>
+</tr>
+<tr>
+  <th>
+    {{ form.education_cess.label_tag }}
+  </th>
+  <td> {{ form.education_cess }} </td>,
+</tr>
+<tr>
+  <th> {{ form.higher_secondary.label_tag }} </th>
+  <td> {{ form.higher_secondary }} </td>
+</tr>
+<tr>
+  <th> {{ form.tds.label_tag }} </th>
+  <td> {{ form.tds }} </td>
+</tr>
+<tr>
+  <th> {{ form.discount.label_tag }} </th>
+  <td> {{ form.discount }} </td>
+</tr>
+<tr>
+  <th> {{ form.round_off.label_tag }}</th>
+  <td> {{ form.round_off }} </td>
+  {{ form.id }}
+</tr>
+</table>
+{% endfor %}
+
+{{ purchaseForm.management_form }}
+</form>

@@ -1,0 +1,20 @@
+{
+    "sEcho": {{sEcho}},
+    "iTotalRecords": {{iTotalRecords}},
+    "iTotalDisplayRecords": {{iTotalDisplayRecords}},
+    "aaData":[
+    {% for sale in querySet %}
+    [
+
+    	"{{sale.service_type.name}}",
+    	"{{sale.sales_transaction_no}}",
+	"Client Data not present",
+	"purchaser info not present",
+	"{{sale.service_tax}}"
+    ]
+    {% if not forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+    ]
+}

@@ -1,0 +1,144 @@
+<script>
+    $(function() {
+	var csrf = '{{ csrf_token }}';
+        $( "#dialog:ui-dialog" ).dialog( "destroy" );
+	var idCounter = new Date().getTime();
+	function showDialog(id) {
+	    var unique_divId = idCounter++;
+	    var customDialog = $('<div id="'+ (unique_divId) +'"> </div>')
+		.load("/config/update_suppliers/"+id)
+		.dialog({
+		    autoOpen: false,
+		    height: 400,
+		    width: 600,
+		    modal: true,
+		    buttons: [{
+			text: (-1 == id ? 'Create' : "Update"),
+			click: function() {
+			    var formdata = $.param($('#' + unique_divId +' form[name=supplier_form]').serializeArray());
+			    $.ajax({
+				type: 'POST',
+				url: '/config/update_suppliers/'+id,
+				dataType: 'json',
+				cache: false,
+				data: formdata,
+				success: function(data) {
+				    $('#' + unique_divId +' form[name=supplier_form]').remove();
+				    customDialog.dialog( 'close' );
+				    if (-1 == id) {
+					sTable.dataTable().fnAddData(data);
+				    } else {
+					sTable.dataTable().fnUpdate(data, fnGetSelectedRowId(sTable), false);
+				    }
+				},
+
+				error: function(errors) {
+				    $("#suppliers-popup").html(errors);
+				}
+			    });
+			},
+		    }],
+		    close: function() {
+			$('#suppliers-popup').dialog('close');
+		    }
+		});
+
+	    customDialog.dialog("open");
+	}
+
+	$("#new-supplier").button({
+	    icons: {
+		primary: "ui-icon-plusthick"
+	    }
+	}).click(function() {
+	    showDialog(-1);
+        });
+
+	$("#delete-supplier").button({
+	    icons: {
+		primary: "ui-icon-minusthick"
+	    }
+	}).click(function() {
+	    if (0 == sTable.$('input').serialize().length) {
+		myAlert("Please select a Row to delete");
+
+	    } else {
+		myConfirm("Are you sure you want to delete it ?",
+			  function() {
+			      $.ajax({
+				  type: 'POST',
+				  url: '/config/delete_supplier/',
+				  dataType: 'json',
+				  cache: false,
+				  data: sTable.$('input').serialize() + '&csrfmiddlewaretoken='+csrf,
+				  success: function(data) {
+				      $(sTable.fnSettings().aoData).each(function() {
+					  if (-1 != $.inArray(this._aData[0], data)) {
+					      sTable.fnDeleteRow( this.nTr );
+					  }
+				      });
+				  },
+				  error: function(errors) {
+				      myAlert(errors);
+				  }
+			      });
+			  },
+			  function() {
+			      myAlert('Canceled')
+			  },
+			  'Confirm Delete');
+	    }
+        });
+
+	/* Data set - can contain whatever information you want */
+	var aDataSet = [ ];
+	var sTable;
+	$('#suppliers-dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="suppliers-table"></table>' );
+	sTable = $('#suppliers-table').dataTable({
+	    "bJQueryUI": true,
+	    "aaData": aDataSet,
+	    "sPaginationType": "full_numbers",
+	    "bProcessing": true,
+	    "sAjaxSource": "/config/json_suppliers",
+	    "aoColumns": [
+		{ "sTitle": "id",
+		  "bSearchable": false,
+		  "bVisible": false },
+		{ "sTitle": "checkbox",
+		  "fnRender": function (c, val) {
+		      return "<input type='checkbox' name='check' value='" + val + "'>";
+		  },
+		  "bSearchable": false,
+		},
+		{ "sTitle": "Service Type"},
+		{ "sTitle": "Company"},
+		{ "sTitle": "Supplier Name" },
+		{ "sTitle": "City" },
+		{ "sTitle": "Phone" },
+		{ "sTitle": "Email" },
+ 	    ],
+	});
+
+	$("#suppliers-table tbody").click(function(event) {
+	    if ('checkbox' == event.target.type) {
+		return;
+	    }
+
+	    $(sTable.fnSettings().aoData).each(function () {
+		$(this.nTr).removeClass('row_selected');
+	    });
+
+	    $(event.target.parentNode).addClass('row_selected');
+	    var aData = sTable.fnGetData(event.target.parentNode);
+	    showDialog(aData[0]);
+	});
+    });
+</script>
+
+<div id="Suppliers" style="float:left;padding-bottom:8px">
+  <button id="new-supplier"> Supplier</button>
+</div>
+<div style="float:right;padding-bottom:8px" id="deleteRecord">
+  <button id="delete-supplier"> Delete Supplier</button>
+</div>
+<div id="suppliers-dynamic"> </div>

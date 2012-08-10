@@ -1,0 +1,29 @@
+<div id="Clients" style="float:left;padding-bottom:8px">
+  <button id="new-client"> Client</button>
+</div>
+<div style="float:right;padding-bottom:8px" id="deleteRecord">
+  <button id="delete-client"> Delete Client</button>
+</div>
+<div id="clients-dynamic"></div>
+<script>
+    var headers = [
+		{ "sTitle": "id",
+		  "bSearchable": false,
+		  "bVisible": false,
+		},
+		{ "sTitle": "",
+		  "fnRender": function (c, val) {
+		      return "<input type='checkbox' name='check' value='" + val + "'>";
+		  },
+		  "bSearchable": false,
+		  "bSortable": false
+		},
+		{ "sTitle": "Company" },
+		{ "sTitle": "Name" },
+		{ "sTitle": "City" },
+		{ "sTitle": "Phone" },
+		{ "sTitle": "Email" },
+		{ "sTitle": "Reference Name"},
+    ];
+    curdView('{{csrf_token}}', 'client', 'client_form', headers, false, '/config/update_clients/', '/config/delete_client/', '/config/json_clients/' );
+</script>

@@ -1,0 +1,270 @@
+<div id="Sales" style="float:left;padding-bottom:8px">
+  <button id="new-airsale"> Sale</button>
+</div>
+<div style="float:right;padding-bottom:8px" id="deleteRecord">
+  <button id="delete-airsale"> Delete Sale</button>
+</div>
+<div id="airsales-dynamic"></div>
+<script>
+    function dumpElement( element ) {
+	var elementDump;
+	// dump element attributes
+	var attrDump = '';
+	var attribute;
+	var dumpedAttribute;
+
+	for( var i = 0; i < element.attributes.length; i++) {
+            attribute = element.attributes[i];
+            // skip every not specified attribute (useful for example in IE)
+            if ( attribute.specified == false ) continue;
+            // current attribute dump
+            dumpedAttribute = attribute.name + '="' + attribute.value + '"';
+            // add current attribute to dump, separating attributes with whitespace
+            attrDump += ((attrDump != '')?' ':'') + dumpedAttribute;
+	}
+
+	var tagName = element.tagName.toLowerCase();
+	// note: innerHTML does not preserve code formatting
+	// note: innerHTML on IE sets the tags names to uppercase (e.g. not W3C Valid)
+	if( element.innerHTML == '' ) {
+            // self closing tag syntax
+            elementDump = '<' + tagName + ((attrDump != '')? ' '+attrDump : '') + '/>';
+
+	} else {
+            elementDump = '<' + tagName + ((attrDump != '')? ' '+attrDump : '') + '>' + element.innerHTML + '</' + tagName + '>';
+	}
+	return elementDump;
+    }
+
+    function getVal(formId) {
+	if ($(formId).val()) {
+	    if (!isNaN(parseFloat($(formId).val()))) {
+		return parseFloat($(formId).val());
+	    }
+	    return 0.0;
+	}
+	return 0.0;
+    };
+
+    function getTotalBasic(prefix) {
+	var totalBasic = 0.0;
+	var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+	for (var i = 0; i < formCount; i++) {
+	    totalBasic += getVal("#id_" + prefix + "-" + i + "-basic_fare");
+	}
+	return totalBasic;
+    }
+
+    function calculateTaxes(prefix) {
+	var totalBasic = getTotalBasic( prefix );
+	var service_tax_per = getVal("#id_s-service_tax_per");
+	var education_cess_per = getVal("#id_s-education_cess_per")
+	var higher_secondary_per = getVal("#id_s-higher_secondary_per");
+
+	$("#id_s-service_tax").val( (totalBasic * (service_tax_per )/ 100).toFixed(2) )
+	$("#id_s-education_cess").val( (totalBasic * (education_cess_per)/ 100).toFixed(2) )
+	$("#id_s-higher_secondary").val( (totalBasic * (higher_secondary_per)/ 100).toFixed(2) )
+    }
+
+    function calculateTotoal(prefix) {
+	var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+	var total = 0.0;
+
+	for (var i = 0; i < formCount; i++) {
+	    total += getVal("#id_" + prefix + "-" + i + "-basic_fare");
+	    total += getVal("#id_" + prefix + "-" + i + "-airline_tax");
+	}
+	total = total - getVal("#id_s-discount");
+	total += getVal("#id_s-additional_service_charge");
+	total += getVal("#id_s-round_off");
+
+	calculateTaxes(prefix);
+	total += getVal("#id_s-service_tax");
+	total += getVal("#id_s-education_cess");
+	total += getVal("#id_s-higher_secondary");
+
+	$("#id_s-total").val(total.toFixed(2));
+
+	alert("tax" + $("#id_s-total").val());
+    }
+
+    $( "#dialog:ui-dialog" ).dialog( "destroy" );
+    var idCounter = new Date().getTime();
+    function showDialog(id) {
+	var unique_divId = idCounter++;
+	var dynamicDiv = '<div id="'+ (unique_divId) +'"> </div>';
+	var customDialog = $(dynamicDiv).load('/update_airsales/'+id)
+	    .dialog({
+		"autoOpen": false,
+		"height": 500,
+		"width": 890,
+		"modal": true,
+		"buttons": [{ text: (-1 == id ? 'Create' : "Update"),
+		  id: "id_new_airsale",
+		  click: function() {
+		      calculateTotoal('form');
+		      var formdata = $.param($('#' + unique_divId +' form[name=airsale_form]').serializeArray());
+		      $.ajax({
+			  type: 'POST',
+			  url: '/update_airsales/'+id,
+			  dataType: 'json',
+			  cache: false,
+			  data: formdata,
+			  success: function(data) {
+			      $('#' + unique_divId +' form[name=airsale_form]').detach();
+			      customDialog.dialog( 'destroy' );
+
+			      if (-1 == id) {
+				  sTable.dataTable().fnAddData(data);
+			      } else {
+				  sTable.dataTable().fnUpdate(data, fnGetSelectedRowId(sTable), false);
+			      }
+			  },
+
+			  error: function(errors) {
+			      $('#'+unique_divId).html(errors.responseText);
+			  }
+		      });
+		  }
+		},
+		{
+		    text: "Next",
+		    id: "id_new_airsale_next",
+		    click: function() {
+		      calculateTotoal('form');
+			var formdata = $.param($('#' + unique_divId +' form[name=airsale_form]').serializeArray());
+			$.ajax({
+			  type: 'POST',
+			  url: '/update_airsales/'+id,
+			  dataType: 'json',
+			  cache: false,
+			  data: formdata,
+			  success: function(data) {
+			      $('#' + unique_divId +' form[name=airsale_form]').detach();
+			      $('#' + unique_divId).load("/update_saleairpurchase/"+data[0])
+			      customDialog
+				  .dialog({
+				      buttons: [{text: 'Finish',
+						 id: "id_finish_airpurchase",
+						 click: function() {
+						     $.ajax({
+							 type: 'POST',
+							 url: '/update_airpurchase/'+data[0],
+							 dataType: 'json',
+							 cache: false,
+							 data: $.param($('#id_air_purchase').serializeArray()),
+							 success: function(data) {
+							     $('#id_air_purchase').detach();
+							     customDialog.dialog( 'destroy' );
+							 }
+						     })
+						 }
+						}]
+				  })
+			      if (-1 == id) {
+				  sTable.dataTable().fnAddData(data);
+			      } else {
+				  sTable.dataTable().fnUpdate(data, fnGetSelectedRowId(sTable), false);
+			      }
+			  },
+
+			  error: function(errors) {
+			      $('#'+unique_divId).html(errors.responseText);
+			  }
+		      });
+		    }
+		}],
+		close: function() {
+		    $('#' + unique_divId +' form[name=airsale_form]').detach();
+		    $('#airsales-popup').dialog('close');
+		}
+	    });
+	customDialog.dialog("open");
+    }
+
+    $("#new-airsale").button({
+	icons: {
+	    primary: "ui-icon-plusthick"
+	}
+    }).click(function() {
+	showDialog(-1);
+    });
+
+    $("#delete-airsale").button({
+	icons: {
+	    primary: "ui-icon-minusthick"
+	}
+    }).click(function() {
+	if (0 == sTable.$('input').serialize().length) {
+	    myAlert("Please select a Row to delete");
+
+	} else {
+	    myConfirm("Are you sure you want to delete it ?",
+		      function() {
+			  $.ajax({
+			      type: 'POST',
+			      url: '/delete_airsales/',
+			      dataType: 'json',
+			      cache: false,
+			      data: sTable.$('input').serialize() + '&csrfmiddlewaretoken='+'{{csrf_token}}',
+			      success: function(data) {
+				  $(sTable.fnSettings().aoData).each(function() {
+				      if (-1 != $.inArray(this._aData[0], data)) {
+					  sTable.fnDeleteRow( this.nTr );
+				      }
+				  });
+			      },
+			      error: function(errors) {
+				  myAlert(errors);
+			      }
+			  });
+		      },
+		      function() {
+			  myAlert('Canceled')
+		      },
+		      'Confirm Delete');
+	}
+    });
+
+    /* Data set - can contain whatever information you want */
+    var aDataSet = [ ];
+    var sTable;
+    $('#airsales-dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="airsale-table"></table>' );
+    sTable = $('#airsale-table').dataTable({
+	"bJQueryUI": true,
+	"aaData": aDataSet,
+	"sPaginationType": "full_numbers",
+	"bProcessing": true,
+	"sAjaxSource": '/json_airsales/',
+	"aoColumns": [
+	    { "sTitle": "id",
+	      "bSearchable": false,
+	      "bVisible": false,
+	    },
+	    { "sTitle": "",
+	      "fnRender": function (c, val) {
+		  return "<input type='checkbox' name='check' value='" + val + "'>";
+	      },
+	      "bSearchable": false,
+	      "bSortable": false
+	    },
+	    { "sTitle": "Service Name" },
+	    { "sTitle": "Client Name" },
+	    { "sTitle": "Sales Transaction No" }
+	],
+    });
+
+    $("#airsale-table tbody").click(function(event) {
+	if ('checkbox' == event.target.type) {
+	    return;
+	}
+
+	$(sTable.fnSettings().aoData).each(function () {
+	    $(this.nTr).removeClass('row_selected');
+	});
+
+	$(event.target.parentNode).addClass('row_selected');
+	var aData = sTable.fnGetData(event.target.parentNode);
+	showDialog(aData[0]);
+    });
+</script>

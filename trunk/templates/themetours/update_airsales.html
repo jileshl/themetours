@@ -1,0 +1,355 @@
+<script>
+    $(document).ready(
+	function() {
+	    $( "#id_s-sales_date" ).datepicker({
+		showOn: "button",
+		buttonImage: "/static/images/calendar.gif",
+		buttonImageOnly: true,
+		dateFormat: "yy-mm-dd",
+	    });
+
+	    /* for (var i=0; i < $("#id_form-TOTAL_FORMS").val(); i++) {
+		$( "#id_form-"+i+"-travel_date" ).datepicker({
+		    showOn: "button",
+		    buttonImage: "/static/images/calendar.gif",
+		    buttonImageOnly: true,
+		    dateFormat: "yy-mm-dd",
+		});
+	    }*/
+
+      $("#id_s-service_type").change(function() {
+	  $.getJSON("/json_sales/service_type/"+$(this).val()+"/", function(j) {
+	      var options = '<option value="">---------- </option>';
+              for (var i = 1; i < j.length; i++) {
+		  options += '<option value="' + parseInt(j[i].pk) + '">' + j[i].fields['first_name'] + ' ' + j[i].fields['last_name'] + '</option>';
+              }
+
+	      $('#id_s-service_tax_per').val(j[0].fields['service_tax']);
+	      $('#id_s-education_cess_per').val(j[0].fields['education_cess']);
+	      $('#id_s-higher_secondary_per').val(j[0].fields['higher_secondary']);
+
+	      var passengerinfo = $('.item');
+
+	      for(var i = 0; i < passengerinfo.length; i++) {
+		  var passengerinfo_supplier = '#id_form-'+i+'-supplier'
+		  $(passengerinfo_supplier).html(options);
+	      }
+	  });
+      });
+
+      function updateElementIndex(el, prefix, ndx) {
+	  var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+	  var replacement = prefix + '-' + ndx + '-';
+
+	  if ($(el).attr("for")) {
+	      $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+	  }
+
+	  if (el.id) {
+	      el.id = el.id.replace(id_regex, replacement);
+	  }
+
+	  if (el.name) {
+	      el.name = el.name.replace(id_regex, replacement);
+	  }
+      }
+
+      function deleteForm(btn, prefix) {
+	  var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+
+	  if (formCount > 1) {
+	      // Delete the item/form
+	      $(btn).parents('.item').remove();
+
+	      var forms = $('.item'); // Get all the forsm
+
+	      // Update the total number of forms (1 less than before)
+	      $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+
+	      var i = 0;
+	      // Go through the forms and set their indices, names and IDs
+	      formCount = forms.length;
+
+	      for (i = 0; i < formCount; i++) {
+		  var row = $(forms.get(i));
+		  $(row).children().children().children().each(function() {
+		      $(this).children().each(function() {
+			  $(this).children().each(function() {
+			      updateElementIndex(this, prefix, i);
+			  })})});
+	      }
+
+	      /* for (i = 0; i <formCount; i++) {
+		  var deletebutton = $(row).find('#id_form-'+(i)+'-delete');
+		  $(deletebutton).html("Delete PAX" + (i + 1));
+		  // $(deletebutton).button( 'destroy' );
+		  var parent = $(deletebutton).parent();
+		  $(deletebutton).detach();
+		  $(deletebutton).button({
+		      icons: {
+			  primary: "ui-icon-trash"
+		      }, text: false
+		  }).click(function() {
+		      return deleteForm(this, 'form');
+		  });
+		  $(parent).append(deletebutton);
+	      }*/
+	  } // End if
+	  else {
+              alert("You have to enter at least one Passanger Info!");
+	  }
+	  return false;
+      }
+
+      function addForm(btn, prefix) {
+	  var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+	  var formMaxCount = parseInt($('#id_' + prefix + '-MAX_NUM_FORMS').val());
+
+	  // You can only submit a maximum of 6 todo items
+	  if (formCount < formMaxCount) {
+	      // Clone a form (without event handlers) from the first form
+	      var row = $(".item:first").clone(true).get(0);
+	      // Insert it after the last form
+	      $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+
+	      // Remove the bits we don't want in the new row/form
+	      // e.g. error messages
+	      // $(".errorlist", row).remove();
+	      // $(row).children().removeClass('error');
+
+	      $(row).children().children().children().each(function() {
+		  $(this).children().each(function() {
+		      $(this).children().each(function() {
+			  updateElementIndex(this, prefix, formCount);
+			  //if ( $(this).attr('type') == 'text' || $(this).attr('type') == 'select' )
+			  $(this).val('');
+		      })
+		  });
+              });
+
+	      // Add an event handler for the delete item/form link
+	      for (i = 0; i <=formCount; i++) {
+		  var deletebutton = $(row).find('#id_form-'+(i)+'-delete');
+		  $(deletebutton).html("Delete PAX" + (i + 1));
+		  $(deletebutton).button( 'destroy' );
+		  var parent = $(deletebutton).parent();
+		  $(deletebutton).detach();
+		  $(deletebutton).button({
+		      icons: {
+			  primary: "ui-icon-trash"
+		      }, text: false
+		  }).click(function() {
+		      return deleteForm(this, 'form');
+		  });
+		  $(parent).append(deletebutton);
+	      }
+
+	      $(row).find('.air_pax_num').html( "Airline PAX " + (formCount + 1) + " Information" );
+	      $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
+
+	  } else {
+	      alert("Sorry, you can only enter a maximum of " + formMaxCount  + " Passangers.");
+	  }
+	  return false;
+      }
+      $("#add_pax").button({
+	  icons: {
+	      primary: "ui-icon-plusthick"
+	  }
+      }).click(function() {
+	  addForm(this, 'form');
+      });
+
+      $(".delete_form").button({
+	  icons: {
+	      primary: "ui-icon-trash"
+	  },
+	  text: false
+      }).click(function() {
+	  return deleteForm(this, 'form');
+      });
+    });
+</script>
+
+<div id="airsales-popup">
+<form id = "id_sale_form" name="airsale_form"  method="post">{% csrf_token %}
+  <table>
+    <tr>
+      <th colspan='1'> {{ salesForm.sales_date.label_tag }} </th>
+      <td colspan='1'> {{ salesForm.sales_date }} </td>
+    </tr>
+    <tr>
+      <td colspan='4'>{{ salesForm.sales_date.errors}} </td>
+    </tr>
+
+    <tr>
+      <th> {{ salesForm.service_type.label_tag }} </th>
+      <td colspan='3'> {{ salesForm.service_type }} </td>
+    </tr>
+    <tr>
+      <td colspan='4'>{{ salesForm.service_type.errors}}</td>
+    </tr>
+
+    <tr>
+      <th> {{ salesForm.client.label_tag }} </th>
+      <td  colspan='3'> {{ salesForm.client }} </td>
+    </tr>
+    <tr>
+      <td colspan='4'>{{ salesForm.client.errors}}</td>
+    </tr>
+    <tr>
+    <td colspan='6'>
+      {% for form in formset.forms %}
+      <div class="item">
+	<table border='solid 1px' width="100%">
+	  <tr rowspan='1'>
+	    <th colspan='4' style="font-weight:bold; border-right:none;" align='center'>
+	      <h4> <span class="air_pax_num"> PAX Information </span> </h4>
+	    </th>
+	    <td colspan='2' align='right' style="font-weight:bold; border-left:none;" >
+	      <button class="delete_form" id="id_form-{{forloop.counter|add:"-1"}}-delete">Delete Pax {{ forloop.counter }}</button>
+	    </td>
+	  </tr>
+	  <tr>
+	    <th colspan='1'> {{ form.supplier.label_tag }} </th>
+	    <td colspan='1'> {{ form.supplier }} </td>
+	    <th colspan='1'> {{ form.transaction_no.label_tag }} </th>
+	    <td colspan='1'> {{ form.transaction_no }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='2'>{{ form.supplier.errors}}</td>
+	    <td colspan='2'>{{ form.transaction_no.errors}}</td>
+	  </tr>
+	  <tr>
+	    <th colspan='1'> {{ form.pax_name.label_tag }} </th>
+	    <td colspan='3'> {{ form.pax_name }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='4'>{{ form.pax_name.errors}}</td>
+	  </tr>
+	  <tr>
+	    <th colspan='1'> {{ form.sector_from1.label_tag }} </th>
+	    <th colspan='1'> {{ form.sector_to1.label_tag }}</th>
+	    <th colspan='2'> {{ form.travel_date1.label_tag }} </th>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center"> {{form.sector_from1 }} </td>
+	    <td colspan='1' align="center"> {{form.sector_to1 }} </td>
+	    <td colspan='2' align="center"> {{form.travel_date1 }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center">{{ form.sector_from1.errors}}</td>
+	    <td colspan='1' align="center">{{ form.sector_to1.errors}}</td>
+	    <td colspan='2' align="center">{{ form.travel_date1.errors}}</td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center"> {{form.sector_from2 }} </td>
+	    <td colspan='1' align="center"> {{form.sector_to2 }} </td>
+	    <td colspan='2' align="center"> {{form.travel_date2 }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center">{{ form.sector_from2.errors}}</td>
+	    <td colspan='1' align="center">{{ form.sector_to2.errors}}</td>
+	    <td colspan='2' align="center">{{ form.travel_date2.errors}}</td>
+	  </tr>
+
+	  <tr>
+	    <td colspan='1' align="center"> {{form.sector_from3 }} </td>
+	    <td colspan='1' align="center"> {{form.sector_to3 }} </td>
+	    <td colspan='2' align="center"> {{form.travel_date3 }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center">{{ form.sector_from3.errors}}</td>
+	    <td colspan='1' align="center">{{ form.sector_to3.errors}}</td>
+	    <td colspan='2' align="center">{{ form.travel_date3.errors}}</td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center"> {{form.sector_from4 }} </td>
+	    <td colspan='1' align="center"> {{form.sector_to4 }} </td>
+	    <td colspan='2' align="center"> {{form.travel_date4 }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center">{{ form.sector_from4.errors}}</td>
+	    <td colspan='1' align="center">{{ form.sector_to4.errors}}</td>
+	    <td colspan='2' align="center">{{ form.travel_date4.errors}}</td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center"> {{form.sector_from5 }} </td>
+	    <td colspan='1' align="center"> {{form.sector_to5 }} </td>
+	    <td colspan='2' align="center"> {{form.travel_date5 }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center">{{ form.sector_from5.errors}}</td>
+	    <td colspan='1' align="center">{{ form.sector_to5.errors}}</td>
+	    <td colspan='2' align="center">{{ form.travel_date5.errors}}</td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center"> {{form.sector_from6 }} </td>
+	    <td colspan='1' align="center"> {{form.sector_to6 }} </td>
+	    <td colspan='2' align="center"> {{form.travel_date6 }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='1' align="center">{{ form.sector_from6.errors}}</td>
+	    <td colspan='1' align="center">{{ form.sector_to6.errors}}</td>
+	    <td colspan='2' align="center">{{ form.travel_date6.errors}}</td>
+	  </tr>
+
+	  <tr>
+	    <th> {{form.basic_fare.label_tag }} </th>
+	    <td> {{form.basic_fare }} </td>
+
+	    <th> {{form.airline_taxes.label_tag }} </th>
+	    <td> {{form.airline_taxes }} {{ form.id }} </td>
+	  </tr>
+	  <tr>
+	    <td colspan='2'>{{ form.basic_fare.errors}}</td>
+	    <td colspan='2'>{{ form.airline_taxes.errors}}</td>
+	  </tr>
+	</table>
+      </div>
+      {% endfor %}
+    </td>
+    </tr>
+    <tr>
+      <td colspan='5'>
+	{{ formset.management_form }}
+
+	{{ salesForm.service_tax_per }}
+	{{ salesForm.service_tax }}
+
+	{{ salesForm.education_cess_per }}
+	{{ salesForm.education_cess }}
+
+	{{ salesForm.higher_secondary_per }}
+	{{ salesForm.higher_secondary }}
+	<a id="add_pax" href="#">Add Passenger</a>
+      </td>
+    </tr>
+    <tr>
+      <th> {{ salesForm.discount.label_tag }}</th>
+      <td> {{ salesForm.discount }} </td>
+
+      <th> {{ salesForm.additional_service_charge.label_tag }}  </th>
+      <td> {{ salesForm.additional_service_charge }} </td>
+    </tr>
+    <tr>
+      <td colspan='2'>{{ salesForm.discount.errors}}</td>
+      <td colspan='2'>{{ salesForm.additional_service_charge.errors}}</td>
+    </tr>
+    <tr>
+      <th> {{ salesForm.round_off.label_tag }}  </th>
+      <td colspan='1'> {{ salesForm.round_off }} </td>
+    </tr>
+    <tr>
+      <td colspan='1'>{{ salesForm.round_off.errors}}</td>
+    </tr>
+    <tr>
+      <th> {{ salesForm.total.label_tag }} </th>
+      <td colspan='1'> {{ salesForm.total }} </td>
+    </tr>
+    <tr>
+      <td colspan='1'>{{ salesForm.total.errors}}</td>
+    </tr>
+  </table>
+</form>
+</div>
