@@ -1,0 +1,25 @@
+<div id="purchases-dynamic"> </div>
+<script>
+    var headers = [
+		{ "sTitle": "id",
+		  "bSearchable": false,
+		  "bVisible": false,
+		},
+		{ "sTitle": "",
+		  "fnRender": function (c, val) {
+		      return "<input type='checkbox' name='check' value='" + val + "'>";
+		  },
+		  "bSearchable": false,
+		  "bSortable": false
+		},
+		{ "sTitle": "P Txn No"},
+		{ "sTitle": "Company"},
+		{ "sTitle": "S.T" },
+		{ "sTitle": "E.C" },
+		{ "sTitle": "H.S" },
+		{ "sTitle": "Tds" },
+		{ "sTitle": "discount" },
+    ];
+    curdView('{{csrf_token}}', 'purchase', 'purchase_form', headers, true, '/update_airpurchases/', '/delete_purchase/', '/json_purchases/' );
+</script>
+

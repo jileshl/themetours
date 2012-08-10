@@ -1,0 +1,95 @@
+<script>
+    $(function() {
+        $( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$( "#clients-popup" ).dialog({
+	    autoOpen: false,
+	    height: 300,
+	    width: 350,
+	    modal: true,
+	    buttons: {
+		"Create an account": function() {
+		},
+		Cancel: function() {
+		    $( this ).dialog( "close" );
+		}
+	    },
+	    close: function() {
+                $( "#clients-popup" ).dialog( "close" );
+	    }
+	});
+
+	$("#new-user")
+	    .button({
+		icons: {
+		    primary: "ui-icon-plusthick"
+		}
+	    })
+            .click(function() {
+		$( "#clients-popup" ).dialog( "open" );
+            });
+    });
+</script>
+
+<div id="Users">
+  <button id="new-user">User</button>
+</div>
+<div id="clients-popup">
+  Hello World!!
+</div>
+
+
+<script type="text/javascript" charset="utf-8">
+    $(function() {
+	/* Data set - can contain whatever information you want */
+	var aDataSet = [ ];
+
+	$(document).ready(function() {
+	    var cTable;
+	    $('#users-dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="users-table"></table>' );
+	    cTable = $('#users-table').dataTable( {
+		"bJQueryUI": true,
+		"aaData": aDataSet,
+		"sPaginationType": "full_numbers",
+		/* "bProcessing": true,
+		"sAjaxSource": "/json_clients",*/
+		"aoColumns": [
+		    { "sTitle": "Type" },
+		    { "sTitle": "TicketNo" },
+		    { "sTitle": "Client" },
+		    { "sTitle": "Purchaser"},
+		    { "sTitle": "Amount" }
+		  /*{ "sTitle": "Engine" },
+		    { "sTitle": "Browser" },
+		    { "sTitle": "Platform" },
+		    { "sTitle": "Version", "sClass": "center" },
+		    {
+			"sTitle": "Grade",
+			"sClass": "center",
+			"fnRender": function(obj) {
+			    var sReturn = obj.aData[ obj.iDataColumn ];
+			    if ( sReturn == "A" ) {
+				sReturn = "<b>A</b>";
+			    }
+			    return sReturn;
+			}
+		    }*/
+		]
+	    });
+
+	    $("#users-table tbody tr").click( function( e ) {
+		if ( $(this).hasClass('row_selected') ) {
+		    $(this).removeClass('row_selected');
+		} else {
+		    cTable.$('tr.row_selected').removeClass('row_selected');
+		    $(this).addClass('row_selected');
+		}
+	    });
+	});
+	/* Get the rows which are currently selected */
+	function fnGetSelected( cTableLocal ) {
+	    return cTableLocal.$('tr.row_selected');
+	}
+    });
+</script>
+<div id="users-dynamic"></div>

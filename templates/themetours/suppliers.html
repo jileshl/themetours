@@ -1,0 +1,30 @@
+<div id="Suppliers" style="float:left;padding-bottom:8px">
+  <button id="new-supplier"> Supplier</button>
+</div>
+<div style="float:right;padding-bottom:8px" id="deleteRecord">
+  <button id="delete-supplier"> Delete Supplier</button>
+</div>
+<div id="suppliers-dynamic"> </div>
+<script>
+    var headers = [
+		{ "sTitle": "id",
+		  "bSearchable": false,
+		  "bVisible": false,
+		},
+		{ "sTitle": "",
+		  "fnRender": function (c, val) {
+		      return "<input type='checkbox' name='check' value='" + val + "'>";
+		  },
+		  "bSearchable": false,
+		  "bSortable": false
+		},
+		{ "sTitle": "Service Type"},
+		{ "sTitle": "Company"},
+		{ "sTitle": "Supplier Name" },
+		{ "sTitle": "City" },
+		{ "sTitle": "Phone" },
+		{ "sTitle": "Email" },
+    ];
+    curdView('{{csrf_token}}', 'supplier', 'supplier_form', headers, false, '/config/update_suppliers/', '/config/delete_supplier/', '/config/json_suppliers/' );
+</script>
+

@@ -1,0 +1,328 @@
+{% extends "themetours/base.html" %}
+{% block jQueryScript %}
+<script>
+  $(function() {
+      var $tabs = $( "#tabs" ).tabs();
+      var $salesPurchaseTabs = $( "#SalesPurchase" )
+	  .tabs({
+	      ajaxOptions:
+	      {
+		  error: function( xhr, status, index, anchor ) {
+		      $( anchor.hash ).html(
+			  "Couldn't load this tab. We'll try to fix this as soon as possible. " +
+			      "If this wouldn't be a demo." );
+		  }
+	      }
+	  });
+      var $debitCreditTabs = $( "#DebitCredit" )
+	  .tabs({
+	      ajaxOptions:
+	      {
+		  error: function( xhr, status, index, anchor ) {
+		      $( anchor.hash ).html(
+			  "Couldn't load this tab. We'll try to fix this as soon as possible. " +
+			      "If this wouldn't be a demo." );
+		  }
+	      }
+	  });
+      var $configurationTabs = $( "#Configuration" )
+	  .tabs({
+	      ajaxOptions:
+	      {
+		  error: function( xhr, status, index, anchor ) {
+		      $( anchor.hash ).html(
+			  "Couldn't load this tab. We'll try to fix this as soon as possible. " +
+			      "If this wouldn't be a demo." );
+		  }
+	      }
+	  });
+      var $reportTabs = $( "#Reports" )
+	  .tabs({
+	      ajaxOptions:
+	      {
+		  error: function( xhr, status, index, anchor ) {
+		      $( anchor.hash ).html(
+			  "Couldn't load this tab. We'll try to fix this as soon as possible. " +
+			      "If this wouldn't be a demo." );
+		  }
+	      }
+	  });
+
+      $('html').ajaxSend(function(event, xhr, settings) {
+	  function getCookie(name) {
+	      var cookieValue = null;
+	      if (document.cookie && document.cookie != '') {
+		  var cookies = document.cookie.split(';');
+		  for (var i = 0; i < cookies.length; i++) {
+		      var cookie = jQuery.trim(cookies[i]);
+		      // Does this cookie string begin with the name we want?
+		      if (cookie.substring(0, name.length + 1) == (name +'=')) {
+			  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+			  break;
+		      }
+		  }
+	      }
+	      return cookieValue;
+	  }
+
+	  function sameOrigin(url) {
+	      // url could be relative or scheme relative or absolute
+	      var host = document.location.host; // host + port
+	      var protocol = document.location.protocol;
+	      var sr_origin = '//' + host;
+	      var origin = protocol + sr_origin;
+	      // Allow absolute or scheme relative URLs to same origin
+	      return (url == origin || url.slice(0, origin.length + 1) ==
+		      origin + '/') ||
+		  (url == sr_origin || url.slice(0, sr_origin.length + 1) ==
+		   sr_origin + '/') ||
+		  // or any other URL that isn't scheme relative or absolute i.e relative.
+		  !(/^(\/\/|http:|https:).*/.test(url));
+	  }
+
+	  function safeMethod(method) {
+	      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	  }
+
+	  if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+	      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+	  }
+      });
+  });
+
+function myConfirm(dialogText, okFunc, cancelFunc, dialogTitle) {
+    $('<div style="padding: 10px; max-width: 500px; word-wrap: break-word;">' + dialogText + '</div>')
+	.dialog({
+	    draggable: false,
+	    modal: true,
+	    resizable: false,
+	    width: 250,
+	    title: dialogTitle || 'Confirm',
+	    minHeight: 90,
+	    buttons: {
+		OK: function () {
+		    if (typeof (okFunc) == 'function') { setTimeout(okFunc, 50); }
+		    $(this).dialog('destroy');
+		},
+		Cancel: function () {
+		    if (typeof (cancelFunc) == 'function') { setTimeout(cancelFunc, 50); }
+		    $(this).dialog('destroy');
+		}
+	    }
+	});
+}
+
+function myAlert(text) {
+    $('<div style="padding: 10px; max-width: 500px; word-wrap: break-word;">' + text + '</div>')
+	.dialog({
+	    draggable: false,
+	    modal: true,
+	    resizable: false,
+	    width: 250,
+	    title: 'Alert',
+	    minHeight: 30,
+	    buttons: {
+		OK: function () {
+		    if (typeof (okFunc) == 'function') { setTimeout(okFunc, 50); }
+		    $(this).dialog('destroy');
+		}
+	    }
+	});
+}
+
+/* Get the rows which are currently selected */
+function fnGetSelectedRowId( oTableLocal ) {
+    var aReturn = new Array();
+    var aTrs = oTableLocal.fnGetNodes();
+    var position = 0;
+    for ( var i = 0; i < aTrs.length; i++ ) {
+	if ( $(aTrs[i]).hasClass('row_selected') ) {
+	    aReturn.push( aTrs[i] );
+	    position = i;
+	}
+    }
+    return oTableLocal.fnGetPosition( aTrs[position] );
+}
+
+function fnGetSelected( oTableLocal ) {
+    var aReturn = new Array();
+    var aTrs = oTableLocal.fnGetNodes();
+    for ( var i = 0; i < aTrs.length; i++ ) {
+	if ( $(aTrs[i]).hasClass('row_selected') ) {
+	    aReturn.push( aTrs[i] );
+	}
+    }
+    return aReturn;
+}
+
+function curdView(csrf_token, tag, form_name, headers, noCreate, update_url, delete_url, list_url) {
+    $( "#dialog:ui-dialog" ).dialog( "destroy" );
+    var idCounter = new Date().getTime();
+    function showDialog(id) {
+	var unique_divId = idCounter++;
+	var customDialog = $('<div id="'+ (unique_divId) +'"> </div>')
+	    .load(update_url+id)
+	    .dialog({
+		"autoOpen": false,
+		"height": 400,
+		"width": 600,
+		"modal": true,
+		"buttons": [{
+		    text: (-1 == id ? 'Create' : "Update"),
+		    click: function() {
+			var formdata = $.param($('#' + unique_divId +' form[name='+form_name+']').serializeArray());
+			$.ajax({
+			    type: 'POST',
+			    url: update_url+id,
+			    dataType: 'json',
+			    cache: false,
+			    data: formdata,
+			    success: function(data) {
+				$('#' + unique_divId +' form[name='+form_name+']').remove();
+				customDialog.dialog( 'close' );
+				if (-1 == id) {
+				    sTable.dataTable().fnAddData(data);
+				} else {
+				    sTable.dataTable().fnUpdate(data, fnGetSelectedRowId(sTable), false);
+				}
+			    },
+
+			    error: function(errors) {
+				$('#'+unique_divId).html(errors.responseText);
+			    }
+			});
+		    },
+		}],
+		close: function() {
+		    $('#' + unique_divId +' form[name='+form_name+']').detach();
+		    $('#'+tag+'s-popup').dialog('close');
+		}
+	    });
+
+	customDialog.dialog("open");
+    }
+
+    if(!noCreate) {
+	$("#new-"+tag).button({
+	    icons: {
+		primary: "ui-icon-plusthick"
+	    }
+	}).click(function() {
+	    showDialog(-1);
+	});
+    }
+    $("#delete-"+tag).button({
+	icons: {
+	    primary: "ui-icon-minusthick"
+	}
+    }).click(function() {
+	if (0 == sTable.$('input').serialize().length) {
+	    myAlert("Please select a Row to delete");
+
+	} else {
+	    myConfirm("Are you sure you want to delete it ?",
+		      function() {
+			  $.ajax({
+			      type: 'POST',
+			      url: delete_url,
+			      dataType: 'json',
+			      cache: false,
+			      data: sTable.$('input').serialize() + '&csrfmiddlewaretoken='+csrf_token,
+			      success: function(data) {
+				  $(sTable.fnSettings().aoData).each(function() {
+				      if (-1 != $.inArray(this._aData[0], data)) {
+					  sTable.fnDeleteRow( this.nTr );
+				      }
+				  });
+			      },
+			      error: function(errors) {
+				  myAlert(errors);
+			      }
+			  });
+		      },
+		      function() {
+			  myAlert('Canceled')
+		      },
+		      'Confirm Delete');
+	}
+    });
+
+    /* Data set - can contain whatever information you want */
+    var aDataSet = [ ];
+    var sTable;
+    $('#'+tag+'s-dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="'+tag+'-table"></table>' );
+    sTable = $('#'+tag+'-table').dataTable({
+	"bJQueryUI": true,
+	"aaData": aDataSet,
+	"sPaginationType": "full_numbers",
+	"bProcessing": true,
+	"sAjaxSource": list_url,
+	"aoColumns": headers,
+    });
+
+    $("#"+tag+"-table tbody").click(function(event) {
+	if ('checkbox' == event.target.type) {
+	    return;
+	}
+
+	$(sTable.fnSettings().aoData).each(function () {
+	    $(this.nTr).removeClass('row_selected');
+	});
+
+	$(event.target.parentNode).addClass('row_selected');
+	var aData = sTable.fnGetData(event.target.parentNode);
+	showDialog(aData[0]);
+    });
+}
+</script>
+{% endblock %}
+
+{% block tabwidget %}
+<div id="tabs">
+  <ul>
+    <li><a href="#SalesPurchase">Sales / Purchase</a></li>
+    <li><a href="#DebitCredit">Debit / Credit</a></li>
+    <li><a href="#Configuration">Configuration</a></li>
+    <li><a href=#Reports>Reports</a></li>
+  </ul>
+  <div id="SalesPurchase">
+    <ul>
+      <li><a href="/airsales/">Sales</a></li>
+      <li><a href="/purchases/">Purchase</a></li>
+    </ul>
+  </div>
+
+  <div id="DebitCredit">
+    <ul>
+      <li><a href="#Debit">Debit</a></li>
+      <li><a href="#Credit">Credit</a></li>
+    </ul>
+    <div id="Debit">
+      <p>Debit Div</p>
+    </div>
+    <div id="Credit">
+      <p>Credit</p>
+    </div>
+  </div>
+  <div id="Configuration">
+    <ul>
+      <li><a href="/config/services/">Services</a></li>
+      <li><a href="/config/clients/">Clients</a></li>
+      <li><a href="/config/suppliers/">Suppliers</a></li>
+      <!-- <li><a href="/config/users/">Users</a></li>
+      <li><a href="#Group">Group</a></li> -->
+    </ul>
+   <!-- <div id="Group">
+      <p>Group Div</p>
+    </div> -->
+  </div>
+  <div id="Reports">
+    <ul>
+      <li><a href="#SalesPurchaseReport">Sales/PurchaseReport</a></li>
+    </ul>
+    <div id="SalesPurchaseReport">
+      <p>Sales PurchaseReportDiv</p>
+    </div>
+  </div>
+</div><!-- End demo -->
+{% endblock %}

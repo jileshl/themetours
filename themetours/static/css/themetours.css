@@ -1,0 +1,47 @@
+body {
+   background-image: url("/static/bg.gif");
+   background-repeat: repeat-x;
+   background-position: left top;
+   background-color: black;
+   color: #930;
+   display: block;
+}
+
+.page-container {
+ height:500px;
+ width:70%;
+ /* border:1px solid black; */
+ text-align:left;
+}
+
+.header-logo {
+ height:90px;
+}
+
+/* -------------------- datatable-------------------- */
+table.display tr.even.row_selected td {
+    background-color: #FFFF7F;
+}
+
+table.display tr.odd.row_selected td {
+    background-color: #FFFF7F;
+}
+
+table.display tr.even.row_selected td.sorting_1 {
+    background-color: #FFFF7F;
+}
+
+table.display tr.odd.row_selected td.sorting_1 {
+    background-color: #FFFF7F;
+}
+
+.row {
+    display: inline;
+    padding: 2px;
+}
+
+.column {
+    float: left;
+    padding: 2px;
+}
+/* --------------------  end datatable --------------------  */

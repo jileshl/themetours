@@ -1,0 +1,30 @@
+<div id="Services" style="float:left;padding-bottom:8px">
+  <button id="new-service"> Service</button>
+</div>
+<div style="float:right;padding-bottom:8px" id="deleteRecord">
+  <button id="delete-service"> Delete Service</button>
+</div>
+<div id="services-dynamic"></div>
+<script>
+    var headers = [
+		{ "sTitle": "id",
+		  "bSearchable": false,
+		  "bVisible": false,
+		},
+		{ "sTitle": "",
+		  "fnRender": function (c, val) {
+		      return "<input type='checkbox' name='check' value='" + val + "'>";
+		  },
+		  "bSearchable": false,
+		  "bSortable": false
+		},
+		{ "sTitle": "Name" },
+		{ "sTitle": "Code" },
+		{ "sTitle": "S.T." },
+		{ "sTitle": "E.C." },
+		{ "sTitle": "H.S."},
+		{ "sTitle": "From Date" },
+		{ "sTitle": "To Date" }
+    ];
+    curdView('{{csrf_token}}', 'service', 'service_form', headers, false, '/config/update_services/', '/config/delete_service/', '/config/json_services/' );
+</script>
