@@ -1,6 +1,23 @@
 <script>
     $(document).ready(
+	function () {
+            $('#id_s-discount').change(function () {
+		calculateTotal('form');
+	    });
+
+            $('#id_s-additional_service_charge').change(function () {
+		calculateTotal('form');
+	    });
+
+            $('#id_s-round_off').change(function () {
+		calculateTotal('form');
+	    });
+	}
+    );
+
+    $(document).ready(
 	function() {
+	    calculateTotal('form');
 	    $( "#id_s-sales_date" ).datepicker({
 		showOn: "button",
 		buttonImage: "/static/images/calendar.gif",
@@ -344,6 +361,8 @@
       <td colspan='1'>{{ salesForm.round_off.errors}}</td>
     </tr>
     <tr>
+      <th> Tax: </th>
+      <td colspan='1'> <input type="text" name="air_tax" id = "id_air_tax" value="0" disabled /> </td>
       <th> {{ salesForm.total.label_tag }} </th>
       <td colspan='1'> {{ salesForm.total }} </td>
     </tr>

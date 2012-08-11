@@ -24,7 +24,7 @@ urlpatterns = patterns('',
 
     url(r'^purchases/', 'themetours.views.purchases'),
     url(r'^json_purchases/', 'themetours.views.json_purchases'),
-    url(r'^update_airpurchases/(-?\d+)', 'themetours.views.update_airpurchase'),
+    url(r'^update_airpurchase/(-?\d+)', 'themetours.views.update_airpurchase'),
     url(r'^update_saleairpurchase/(-?\d+)', 'themetours.views.update_saleairpurchase'),
 
     url(r'^reports/', 'themetours.views.reports'),
