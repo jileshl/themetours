@@ -310,7 +310,7 @@ def update_airsale(request, id):
                     purchaseModel.round_off = 0
 
                 if (None !=  purchaseModel):
-                    purchaseModel.supplier=passenger_info.supplier
+                    purchaseModel.supplier = passenger_info.supplier
                     purchaseModel.service_tax_per = salesModel.service_type.service_tax
                     purchaseModel.service_tax = salesModel.service_tax
                     purchaseModel.education_cess_per = salesModel.service_type.education_cess
@@ -416,6 +416,12 @@ def service_related_models(request, id):
 
 ####################################################PURCHASE#########################################################################
 
+class PassengerInfoFormSet(BaseModelFormSet):
+    def __init__(self, *args, **kwargs):
+        super(PassengerInfoFormSet, self).__init__(*args, **kwargs)
+        for form in self.forms:
+            form.empty_permitted = True
+
 def update_saleairpurchase(request, saleId):
     PurchaseFormSet = modelformset_factory(Purchase, form=PurchaseForm, can_delete=False, can_order=False,extra=0)
 
@@ -432,14 +438,15 @@ def update_saleairpurchase(request, saleId):
                                                                           'id' : id})
     else:
         purchase_formset = PurchaseFormSet(request.POST)
-        for form in purchase_formset:
-            if(form.is_valid()):
+
+        if purchase_formset.is_valid():
+            for form in purchase_formset:
                 model = form.save()
                 model.save();
-            else:
-                return render(request, 'themetours/update_airpurchase.html', {'purchaseForm' : purchase_formset,
+        else:
+            return render(request, 'themetours/update_saleairpurchase.html', {'purchaseForm' : purchase_formset,
                                                                               'id' : id},
-                              status=302)
+                          status=302)
     return HttpResponse(model.to_json(), content_type='application/json')
 
 def update_airpurchase(request, id):

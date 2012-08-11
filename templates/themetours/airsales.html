@@ -64,28 +64,32 @@
 	$("#id_s-service_tax").val( (totalBasic * (service_tax_per )/ 100).toFixed(2) )
 	$("#id_s-education_cess").val( (totalBasic * (education_cess_per)/ 100).toFixed(2) )
 	$("#id_s-higher_secondary").val( (totalBasic * (higher_secondary_per)/ 100).toFixed(2) )
+
+	return
     }
 
-    function calculateTotoal(prefix) {
+    function calculateTotal(prefix) {
 	var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 	var total = 0.0;
+	var tax_total = 0.0;
 
 	for (var i = 0; i < formCount; i++) {
 	    total += getVal("#id_" + prefix + "-" + i + "-basic_fare");
-	    total += getVal("#id_" + prefix + "-" + i + "-airline_tax");
+	    total += getVal("#id_" + prefix + "-" + i + "-airline_taxes");
 	}
+
 	total = total - getVal("#id_s-discount");
 	total += getVal("#id_s-additional_service_charge");
 	total += getVal("#id_s-round_off");
 
 	calculateTaxes(prefix);
-	total += getVal("#id_s-service_tax");
-	total += getVal("#id_s-education_cess");
-	total += getVal("#id_s-higher_secondary");
+	tax_total += getVal("#id_s-service_tax");
+	tax_total += getVal("#id_s-education_cess");
+	tax_total += getVal("#id_s-higher_secondary");
 
+	$("#id_air_tax").val(tax_total.toFixed(2));
+	total += tax_total;
 	$("#id_s-total").val(total.toFixed(2));
-
-	alert("tax" + $("#id_s-total").val());
     }
 
     $( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -102,7 +106,7 @@
 		"buttons": [{ text: (-1 == id ? 'Create' : "Update"),
 		  id: "id_new_airsale",
 		  click: function() {
-		      calculateTotoal('form');
+		      calculateTotal('form');
 		      var formdata = $.param($('#' + unique_divId +' form[name=airsale_form]').serializeArray());
 		      $.ajax({
 			  type: 'POST',
@@ -131,47 +135,47 @@
 		    text: "Next",
 		    id: "id_new_airsale_next",
 		    click: function() {
-		      calculateTotoal('form');
+			calculateTotal('form');
 			var formdata = $.param($('#' + unique_divId +' form[name=airsale_form]').serializeArray());
 			$.ajax({
-			  type: 'POST',
-			  url: '/update_airsales/'+id,
-			  dataType: 'json',
-			  cache: false,
-			  data: formdata,
-			  success: function(data) {
-			      $('#' + unique_divId +' form[name=airsale_form]').detach();
-			      $('#' + unique_divId).load("/update_saleairpurchase/"+data[0])
-			      customDialog
-				  .dialog({
-				      buttons: [{text: 'Finish',
-						 id: "id_finish_airpurchase",
-						 click: function() {
-						     $.ajax({
-							 type: 'POST',
-							 url: '/update_airpurchase/'+data[0],
-							 dataType: 'json',
-							 cache: false,
-							 data: $.param($('#id_air_purchase').serializeArray()),
-							 success: function(data) {
-							     $('#id_air_purchase').detach();
-							     customDialog.dialog( 'destroy' );
-							 }
-						     })
-						 }
-						}]
-				  })
-			      if (-1 == id) {
-				  sTable.dataTable().fnAddData(data);
-			      } else {
-				  sTable.dataTable().fnUpdate(data, fnGetSelectedRowId(sTable), false);
-			      }
-			  },
+			    type: 'POST',
+			    url: '/update_airsales/'+id,
+			    dataType: 'json',
+			    cache: false,
+			    data: formdata,
+			    success: function(data) {
+				$('#' + unique_divId +' form[name=airsale_form]').detach();
+				$('#' + unique_divId).load("/update_saleairpurchase/"+data[0])
+				customDialog
+				    .dialog({
+					buttons: [{text: 'Finish',
+						   id: "id_finish_airpurchase",
+						   click: function() {
+						       $.ajax({
+							   type: 'POST',
+							   url: '/update_saleairpurchase/'+data[0],
+							   dataType: 'json',
+							   cache: false,
+							   data: $.param($('#id_air_purchase').serializeArray()),
+							   success: function(data) {
+							       $('#id_air_purchase').detach();
+							       customDialog.dialog( 'destroy' );
+							   }
+						       })
+						   }
+						  }]
+				    })
+				if (-1 == id) {
+				    sTable.dataTable().fnAddData(data);
+				} else {
+				    sTable.dataTable().fnUpdate(data, fnGetSelectedRowId(sTable), false);
+				}
+			    },
 
-			  error: function(errors) {
-			      $('#'+unique_divId).html(errors.responseText);
-			  }
-		      });
+			    error: function(errors) {
+				$('#'+unique_divId).html(errors.responseText);
+			    }
+			});
 		    }
 		}],
 		close: function() {
@@ -180,6 +184,10 @@
 		}
 	    });
 	customDialog.dialog("open");
+
+	if (-1 != id) {
+	    $("#id_new_airsale_next").hide();
+	}
     }
 
     $("#new-airsale").button({

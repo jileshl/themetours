@@ -27,28 +27,28 @@ class PassengerInfoForm(ModelForm):
       sector_to1 = forms.CharField(label="To", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
       travel_date1 =  forms.DateField(label="Date", initial=datetime.date.today, widget=SelectDateWidget())
 
-      sector_from2 = forms.CharField(label="From", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      sector_to2 = forms.CharField(label="To", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      travel_date2 =  forms.DateField(label="Date", initial=datetime.date.today, widget=SelectDateWidget())
+      sector_from2 = forms.CharField(label="From", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      sector_to2 = forms.CharField(label="To", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      travel_date2 =  forms.DateField(label="Date", required=False, initial=datetime.date.today, widget=SelectDateWidget())
 
-      sector_from3 = forms.CharField(label="From", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      sector_to3 = forms.CharField(label="To", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      travel_date3 =  forms.DateField(label="Date", initial=datetime.date.today, widget=SelectDateWidget())
+      sector_from3 = forms.CharField(label="From", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      sector_to3 = forms.CharField(label="To", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      travel_date3 =  forms.DateField(label="Date", required=False, initial=datetime.date.today, widget=SelectDateWidget())
 
-      sector_from4 = forms.CharField(label="From", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      sector_to4 = forms.CharField(label="To", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      travel_date4 =  forms.DateField(label="Date", initial=datetime.date.today, widget=SelectDateWidget())
+      sector_from4 = forms.CharField(label="From", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      sector_to4 = forms.CharField(label="To", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      travel_date4 =  forms.DateField(label="Date", required=False, initial=datetime.date.today, widget=SelectDateWidget())
 
-      sector_from5 = forms.CharField(label="From", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      sector_to5 = forms.CharField(label="To", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      travel_date5 =  forms.DateField(label="Date", initial=datetime.date.today, widget=SelectDateWidget())
+      sector_from5 = forms.CharField(label="From", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      sector_to5 = forms.CharField(label="To", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      travel_date5 =  forms.DateField(label="Date", required=False, initial=datetime.date.today, widget=SelectDateWidget())
 
-      sector_from6 = forms.CharField(label="From", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      sector_to6 = forms.CharField(label="To", max_length=3, widget=forms.TextInput(attrs={"size":"4"}))
-      travel_date6 =  forms.DateField(label="Date", initial=datetime.date.today, widget=SelectDateWidget())
+      sector_from6 = forms.CharField(label="From", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      sector_to6 = forms.CharField(label="To", max_length=3, required=False, widget=forms.TextInput(attrs={"size":"4"}))
+      travel_date6 =  forms.DateField(label="Date", required=False, initial=datetime.date.today, widget=SelectDateWidget())
 
-      basic_fare = forms.DecimalField(label="Basic Fare",  max_digits=19, decimal_places=2)
-      airline_taxes = forms.DecimalField(label="Airline Tax",  max_digits=19, decimal_places=2)
+      basic_fare = forms.DecimalField(label="Basic Fare",  initial=0, max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange":"calculateTotal('form')"}))
+      airline_taxes = forms.DecimalField(label="Airline Tax",  initial=0, max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange":"calculateTotal('form')"}))
 
       class Meta:
             model = PassengerInfo
@@ -60,9 +60,9 @@ class SaleForm(ModelForm):
       sales_date = forms.DateField(label="Date", initial=datetime.date.today, widget=forms.DateInput(format='%Y-%m-%d', attrs={'class':'datePicker', 'readonly':'true'}))
       service_type = forms.ModelChoiceField(label = "Service Type", queryset=Service.objects.all(), empty_label=None)
       client = forms.ModelChoiceField(label= "Client", queryset=Client.objects.all(), empty_label=None)
-      additional_service_charge = forms.DecimalField(label="Additional Service Charges",  max_digits=19, decimal_places=2)
-      discount = forms.DecimalField(label="Discount",  max_digits=19, decimal_places=2)
-      round_off = forms.DecimalField(label="Round Off", max_digits=19, decimal_places=2)
+      additional_service_charge = forms.DecimalField(label="Additional Service Charges",  initial=0, max_digits=19, decimal_places=2)
+      discount = forms.DecimalField(label="Discount",  initial=0, max_digits=19, decimal_places=2)
+      round_off = forms.DecimalField(label="Round Off", initial=0, max_digits=19, decimal_places=2)
 
       service_tax_per = forms.DecimalField(label="Service Tax%", max_digits=4, decimal_places=2, widget=forms.HiddenInput)
       service_tax = forms.DecimalField(label="Service Tax", max_digits=19, decimal_places=2, widget=forms.HiddenInput)
