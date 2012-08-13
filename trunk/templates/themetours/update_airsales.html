@@ -12,6 +12,30 @@
             $('#id_s-round_off').change(function () {
 		calculateTotal('form');
 	    });
+
+	    $("#id_s-service_type").ready(function() {
+		$.getJSON("/json_sales/service_type/"+ $("#id_s-service_type").val()+"/", function(j) {
+		    var options = '<option value="">---------- </option>';
+		    for (var i = 1; i < j.length; i++) {
+			options += '<option value="' + parseInt(j[i].pk) + '">'
+			    + ((0 == j[i].fields['company'].trim().length)
+			       ? (j[i].fields['saluation'] + j[i].fields['first_name'] + j[i].fields['last_name'])
+			       : j[i].fields['company'])
+			    + '</option>';
+		    }
+
+		    $('#id_s-service_tax_per').val(j[0].fields['service_tax']);
+		    $('#id_s-education_cess_per').val(j[0].fields['education_cess']);
+		    $('#id_s-higher_secondary_per').val(j[0].fields['higher_secondary']);
+
+		    var passengerinfo = $('.item');
+
+		    for(var i = 0; i < passengerinfo.length; i++) {
+			var passengerinfo_supplier = '#id_form-'+i+'-supplier'
+			$(passengerinfo_supplier).html(options);
+		    }
+		});
+	    });
 	}
     );
 
@@ -25,171 +49,162 @@
 		dateFormat: "yy-mm-dd",
 	    });
 
-	    /* for (var i=0; i < $("#id_form-TOTAL_FORMS").val(); i++) {
-		$( "#id_form-"+i+"-travel_date" ).datepicker({
-		    showOn: "button",
-		    buttonImage: "/static/images/calendar.gif",
-		    buttonImageOnly: true,
-		    dateFormat: "yy-mm-dd",
+	    $("#id_s-service_type").change(function() {
+		$.getJSON("/json_sales/service_type/"+$(this).val()+"/", function(j) {
+		    var options = '<option value="">---------- </option>';
+		    for (var i = 1; i < j.length; i++) {
+			options += '<option value="' + parseInt(j[i].pk) + '">'
+			    + ((0 == j[i].fields['company'].trim().length)
+			       ? (j[i].fields['saluation'] + j[i].fields['first_name'] + j[i].fields['last_name'])
+			       : j[i].fields['company'])
+			    + '</option>';
+		    }
+
+		    $('#id_s-service_tax_per').val(j[0].fields['service_tax']);
+		    $('#id_s-education_cess_per').val(j[0].fields['education_cess']);
+		    $('#id_s-higher_secondary_per').val(j[0].fields['higher_secondary']);
+
+		    var passengerinfo = $('.item');
+
+		    for(var i = 0; i < passengerinfo.length; i++) {
+			var passengerinfo_supplier = '#id_form-'+i+'-supplier'
+			$(passengerinfo_supplier).html(options);
+		    }
 		});
-	    }*/
+	    });
 
-      $("#id_s-service_type").change(function() {
-	  $.getJSON("/json_sales/service_type/"+$(this).val()+"/", function(j) {
-	      var options = '<option value="">---------- </option>';
-              for (var i = 1; i < j.length; i++) {
-		  options += '<option value="' + parseInt(j[i].pk) + '">'
-		      + ((0 == j[i].fields['company'].trim().length)
-			 ? (j[i].fields['saluation'] + j[i].fields['first_name'] + j[i].fields['last_name'])
-			 : j[i].fields['company'])
-		      + '</option>';
-              }
+	    function updateElementIndex(el, prefix, ndx) {
+		var id_regex = new RegExp('(' + prefix + '-\\d+-)');
+		var replacement = prefix + '-' + ndx + '-';
 
-	      $('#id_s-service_tax_per').val(j[0].fields['service_tax']);
-	      $('#id_s-education_cess_per').val(j[0].fields['education_cess']);
-	      $('#id_s-higher_secondary_per').val(j[0].fields['higher_secondary']);
+		if ($(el).attr("for")) {
+		    $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+		}
 
-	      var passengerinfo = $('.item');
+		if (el.id) {
+		    el.id = el.id.replace(id_regex, replacement);
+		}
 
-	      for(var i = 0; i < passengerinfo.length; i++) {
-		  var passengerinfo_supplier = '#id_form-'+i+'-supplier'
-		  $(passengerinfo_supplier).html(options);
-	      }
-	  });
-      });
+		if (el.name) {
+		    el.name = el.name.replace(id_regex, replacement);
+		}
+	    }
 
-      function updateElementIndex(el, prefix, ndx) {
-	  var id_regex = new RegExp('(' + prefix + '-\\d+-)');
-	  var replacement = prefix + '-' + ndx + '-';
+	    function deleteForm(btn, prefix) {
+		var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 
-	  if ($(el).attr("for")) {
-	      $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-	  }
+		if (formCount > 1) {
+		    // Delete the item/form
+		    $(btn).parents('.item').remove();
 
-	  if (el.id) {
-	      el.id = el.id.replace(id_regex, replacement);
-	  }
+		    var forms = $('.item'); // Get all the forsm
 
-	  if (el.name) {
-	      el.name = el.name.replace(id_regex, replacement);
-	  }
-      }
+		    // Update the total number of forms (1 less than before)
+		    $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
 
-      function deleteForm(btn, prefix) {
-	  var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+		    var i = 0;
+		    // Go through the forms and set their indices, names and IDs
+		    formCount = forms.length;
 
-	  if (formCount > 1) {
-	      // Delete the item/form
-	      $(btn).parents('.item').remove();
+		    for (i = 0; i < formCount; i++) {
+			var row = $(forms.get(i));
+			$(row).children().children().children().each(function() {
+			    $(this).children().each(function() {
+				$(this).children().each(function() {
+				    updateElementIndex(this, prefix, i);
+				})})});
+		    }
 
-	      var forms = $('.item'); // Get all the forsm
+		    /* for (i = 0; i <formCount; i++) {
+		       var deletebutton = $(row).find('#id_form-'+(i)+'-delete');
+		       $(deletebutton).html("Delete PAX" + (i + 1));
+		       // $(deletebutton).button( 'destroy' );
+		       var parent = $(deletebutton).parent();
+		       $(deletebutton).detach();
+		       $(deletebutton).button({
+		       icons: {
+		       primary: "ui-icon-trash"
+		       }, text: false
+		       }).click(function() {
+		       return deleteForm(this, 'form');
+		       });
+		       $(parent).append(deletebutton);
+		       }*/
+		} // End if
+		else {
+		    alert("You have to enter at least one Passanger Info!");
+		}
+		return false;
+	    }
 
-	      // Update the total number of forms (1 less than before)
-	      $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+	    function addForm(btn, prefix) {
+		var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+		var formMaxCount = parseInt($('#id_' + prefix + '-MAX_NUM_FORMS').val());
 
-	      var i = 0;
-	      // Go through the forms and set their indices, names and IDs
-	      formCount = forms.length;
+		// You can only submit a maximum of 6 todo items
+		if (formCount < formMaxCount) {
+		    // Clone a form (without event handlers) from the first form
+		    var row = $(".item:first").clone(true).get(0);
+		    // Insert it after the last form
+		    $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
 
-	      for (i = 0; i < formCount; i++) {
-		  var row = $(forms.get(i));
-		  $(row).children().children().children().each(function() {
-		      $(this).children().each(function() {
-			  $(this).children().each(function() {
-			      updateElementIndex(this, prefix, i);
-			  })})});
-	      }
+		    // Remove the bits we don't want in the new row/form
+		    // e.g. error messages
+		    // $(".errorlist", row).remove();
+		    // $(row).children().removeClass('error');
 
-	      /* for (i = 0; i <formCount; i++) {
-		  var deletebutton = $(row).find('#id_form-'+(i)+'-delete');
-		  $(deletebutton).html("Delete PAX" + (i + 1));
-		  // $(deletebutton).button( 'destroy' );
-		  var parent = $(deletebutton).parent();
-		  $(deletebutton).detach();
-		  $(deletebutton).button({
-		      icons: {
-			  primary: "ui-icon-trash"
-		      }, text: false
-		  }).click(function() {
-		      return deleteForm(this, 'form');
-		  });
-		  $(parent).append(deletebutton);
-	      }*/
-	  } // End if
-	  else {
-              alert("You have to enter at least one Passanger Info!");
-	  }
-	  return false;
-      }
+		    $(row).children().children().children().each(function() {
+			$(this).children().each(function() {
+			    $(this).children().each(function() {
+				updateElementIndex(this, prefix, formCount);
+				//if ( $(this).attr('type') == 'text' || $(this).attr('type') == 'select' )
+				$(this).val('');
+			    })
+				});
+		    });
 
-      function addForm(btn, prefix) {
-	  var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-	  var formMaxCount = parseInt($('#id_' + prefix + '-MAX_NUM_FORMS').val());
+		    // Add an event handler for the delete item/form link
+		    for (i = 0; i <=formCount; i++) {
+			var deletebutton = $(row).find('#id_form-'+(i)+'-delete');
+			$(deletebutton).html("Delete PAX" + (i + 1));
+			$(deletebutton).button( 'destroy' );
+			var parent = $(deletebutton).parent();
+			$(deletebutton).detach();
+			$(deletebutton).button({
+			    icons: {
+				primary: "ui-icon-trash"
+			    }, text: false
+			}).click(function() {
+			    return deleteForm(this, 'form');
+			});
+			$(parent).append(deletebutton);
+		    }
 
-	  // You can only submit a maximum of 6 todo items
-	  if (formCount < formMaxCount) {
-	      // Clone a form (without event handlers) from the first form
-	      var row = $(".item:first").clone(true).get(0);
-	      // Insert it after the last form
-	      $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
+		    $(row).find('.air_pax_num').html( "Airline PAX " + (formCount + 1) + " Information" );
+		    $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
 
-	      // Remove the bits we don't want in the new row/form
-	      // e.g. error messages
-	      // $(".errorlist", row).remove();
-	      // $(row).children().removeClass('error');
+		} else {
+		    alert("Sorry, you can only enter a maximum of " + formMaxCount  + " Passangers.");
+		}
+		return false;
+	    }
+	    $("#add_pax").button({
+		icons: {
+		    primary: "ui-icon-plusthick"
+		}
+	    }).click(function() {
+		addForm(this, 'form');
+	    });
 
-	      $(row).children().children().children().each(function() {
-		  $(this).children().each(function() {
-		      $(this).children().each(function() {
-			  updateElementIndex(this, prefix, formCount);
-			  //if ( $(this).attr('type') == 'text' || $(this).attr('type') == 'select' )
-			  $(this).val('');
-		      })
-		  });
-              });
-
-	      // Add an event handler for the delete item/form link
-	      for (i = 0; i <=formCount; i++) {
-		  var deletebutton = $(row).find('#id_form-'+(i)+'-delete');
-		  $(deletebutton).html("Delete PAX" + (i + 1));
-		  $(deletebutton).button( 'destroy' );
-		  var parent = $(deletebutton).parent();
-		  $(deletebutton).detach();
-		  $(deletebutton).button({
-		      icons: {
-			  primary: "ui-icon-trash"
-		      }, text: false
-		  }).click(function() {
-		      return deleteForm(this, 'form');
-		  });
-		  $(parent).append(deletebutton);
-	      }
-
-	      $(row).find('.air_pax_num').html( "Airline PAX " + (formCount + 1) + " Information" );
-	      $('#id_' + prefix + '-TOTAL_FORMS').val(formCount + 1);
-
-	  } else {
-	      alert("Sorry, you can only enter a maximum of " + formMaxCount  + " Passangers.");
-	  }
-	  return false;
-      }
-      $("#add_pax").button({
-	  icons: {
-	      primary: "ui-icon-plusthick"
-	  }
-      }).click(function() {
-	  addForm(this, 'form');
-      });
-
-      $(".delete_form").button({
-	  icons: {
-	      primary: "ui-icon-trash"
-	  },
-	  text: false
-      }).click(function() {
-	  return deleteForm(this, 'form');
-      });
-    });
+	    $(".delete_form").button({
+		icons: {
+		    primary: "ui-icon-trash"
+		},
+		text: false
+	    }).click(function() {
+		return deleteForm(this, 'form');
+	    });
+	});
 </script>
 
 <div id="airsales-popup">

@@ -19,7 +19,7 @@ class SupplierForm(ModelForm):
             exclude = ('is_deleted');
 
 class PassengerInfoForm(ModelForm):
-      supplier = forms.ModelChoiceField(label="Supplier", queryset=Supplier.objects.filter(service_type__id=Service.objects.filter()[0].id, is_deleted=False))
+      supplier = forms.ModelChoiceField(label="Supplier", queryset=Supplier.objects.filter(is_deleted=False), widget=forms.Select(attrs={"onload":"getSuppliers"}))
       pax_name = forms.CharField(label="Passanger Name", max_length=120, widget=forms.TextInput(attrs={"size":"70"}))
       transaction_no = forms.CharField(label="Txn # / Booking #", max_length=16, widget=forms.TextInput)
 
