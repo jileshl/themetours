@@ -308,18 +308,17 @@ def update_airsale(request, id):
                     purchaseModel.tds = 0
                     purchaseModel.discount = 0
                     purchaseModel.round_off = 0
+                    purchaseModel.total = 0.0
 
                 if (None !=  purchaseModel):
                     purchaseModel.supplier = passenger_info.supplier
-                    purchaseModel.service_tax_per = salesModel.service_type.service_tax
-                    purchaseModel.service_tax = salesModel.service_tax
-                    purchaseModel.education_cess_per = salesModel.service_type.education_cess
-                    purchaseModel.education_cess = salesModel.education_cess
-                    purchaseModel.higher_secondary_per = salesModel.service_type.higher_secondary
-                    purchaseModel.higher_secondary = salesModel.higher_secondary
+                    purchaseModel.service_tax = 0.0
+                    purchaseModel.education_cess = 0.0
+                    purchaseModel.higher_secondary = 0.0
                     purchaseModel.tds = 0
                     purchaseModel.discount = 0
                     purchaseModel.round_off = 0
+                    purchaseModel.total = 0.0
 
                 purchaseForm = PurchaseForm(instance=purchaseModel)
                 pmodel = purchaseForm.save(commit=False)

@@ -87,6 +87,7 @@ class PurchaseForm(ModelForm):
       tds = forms.DecimalField(label="tds", max_digits=19, decimal_places=2)
       discount = forms.DecimalField(label="discount", max_digits=19, decimal_places=2)
       round_off = forms.DecimalField(label="round_off", max_digits=19, decimal_places=2)
+      total = forms.DecimalField(label="Total", max_digits=19, decimal_places=2, initial='0.0', widget=forms.TextInput(attrs={'readonly':'readonly'}))
 
       class Meta:
             model = Purchase
