@@ -81,13 +81,19 @@ class SaleForm(ModelForm):
 class PurchaseForm(ModelForm):
       supplier = forms.ModelChoiceField(label="Supplier", queryset=Supplier.objects.filter(is_deleted=False))
       purchase_transaction_no = forms.CharField(label="Purcahse Txn No", max_length=25, widget=forms.HiddenInput)
-      service_tax = forms.DecimalField(label="Service Tax", max_digits=19, decimal_places=2)
-      education_cess = forms.DecimalField(label="Education Cess", max_digits=19, decimal_places=2)
-      higher_secondary = forms.DecimalField(label="H.C", max_digits=19, decimal_places=2)
-      tds = forms.DecimalField(label="tds", max_digits=19, decimal_places=2)
-      discount = forms.DecimalField(label="discount", max_digits=19, decimal_places=2)
-      round_off = forms.DecimalField(label="round_off", max_digits=19, decimal_places=2)
-      total = forms.DecimalField(label="Total", max_digits=19, decimal_places=2, initial='0.0', widget=forms.TextInput(attrs={'readonly':'readonly'}))
+      service_tax = forms.DecimalField(label="Service Tax", max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange": "calculatePurchaseTotal('form')"}))
+      education_cess = forms.DecimalField(label="Education Cess", max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange": "calculatePurchaseTotal('form')"}))
+      higher_secondary = forms.DecimalField(label="H.C", max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange": "calculatePurchaseTotal('form')"}))
+      tds = forms.DecimalField(label="tds", max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange": "calculatePurchaseTotal('form')"}))
+      discount = forms.DecimalField(label="discount", max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange": "calculatePurchaseTotal('form')"}))
+      round_off = forms.DecimalField(label="round_off", max_digits=19, decimal_places=2, widget=forms.TextInput(attrs={"onchange": "calculatePurchaseTotal('form')"}))
+      total = forms.DecimalField(label="Total",
+                                 max_digits=19,
+                                 decimal_places=2,
+                                 initial='0.0',
+                                 widget=forms.TextInput(attrs={'readonly':'readonly',
+                                                               "onload": "calculatePurchaseTotal('form')"}))
+
 
       class Meta:
             model = Purchase

@@ -1,3 +1,17 @@
+<script>
+    function calculatePurchaseTotal(prefix) {
+	var total = 0.0;
+	total += getVal("#id_service_tax");
+	total += getVal("#id_education_cess");
+	total += getVal("#id_higher_secondary");
+	total += getVal("#id_tds");
+	total = total - getVal("#id_discount");
+	total += getVal("#id_round_off");
+
+	$("#id_total").val(total.toFixed(2));
+    };
+</script>
+
 <div id="purchasers-popup">
 <form id = "id_purchaser_form" name = "purchase_form"  method="post">{% csrf_token %}
   <table>
