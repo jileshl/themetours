@@ -449,7 +449,7 @@ def update_saleairpurchase(request, saleId):
                           status=302)
     return HttpResponse(model.to_json(), content_type='application/json')
 
-def update_airpurchase(request, id):
+def update_airpurchases(request, id):
     if 'POST' == request.method:
         if ('-1' == id):
             form = PurchaseForm(request.POST)
