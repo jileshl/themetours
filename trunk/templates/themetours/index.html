@@ -1,6 +1,16 @@
 {% extends "themetours/base.html" %}
 {% block jQueryScript %}
 <script>
+    function getVal(formId) {
+	if ($(formId).val()) {
+	    if (!isNaN(parseFloat($(formId).val()))) {
+		return parseFloat($(formId).val());
+	    }
+	    return 0.0;
+	}
+	return 0.0;
+    };
+
   $(function() {
       var $tabs = $( "#tabs" ).tabs();
       var $salesPurchaseTabs = $( "#SalesPurchase" )

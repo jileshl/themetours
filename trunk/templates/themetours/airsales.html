@@ -36,16 +36,6 @@
 	return elementDump;
     }
 
-    function getVal(formId) {
-	if ($(formId).val()) {
-	    if (!isNaN(parseFloat($(formId).val()))) {
-		return parseFloat($(formId).val());
-	    }
-	    return 0.0;
-	}
-	return 0.0;
-    };
-
     function getTotalBasic(prefix) {
 	var totalBasic = 0.0;
 	var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
@@ -54,6 +44,21 @@
 	}
 	return totalBasic;
     }
+
+    function calculatePurchaseTotal(prefix) {
+	var total = 0.0;
+	var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+	for (var i = 0; i < formCount; i++) {
+	    total += getVal("#id_" + prefix + "-" + i + "-service_tax");
+	    total += getVal("#id_" + prefix + "-" + i + "-education_cess");
+	    total += getVal("#id_" + prefix + "-" + i + "-higher_secondary");
+	    total += getVal("#id_" + prefix + "-" + i + "-tds");
+	    total = total - getVal("#id_" + prefix + "-" + i + "-discount");
+	    total += getVal("#id_" + prefix + "-" + i + "-round_off");
+
+	    $("#id_" + prefix + "-" + i + "-total").val(total.toFixed(2));
+	}
+    };
 
     function calculateTaxes(prefix) {
 	var totalBasic = getTotalBasic( prefix );
