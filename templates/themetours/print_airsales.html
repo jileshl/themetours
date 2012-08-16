@@ -1,0 +1,155 @@
+<html>
+  <style>
+    body {
+	display:block;
+	margin:0 100px auto; /* for the rest */
+    }
+
+    .page {
+	height:100%;
+	width: 100%;
+    }
+
+    .printHeader {
+	font-size:25px;
+	font-weight:bold;
+    }
+
+    .printSubHeader {
+	font-size:9px;
+	display:inline;
+    }
+
+    .printSubHeader-right {
+	text-align:right;
+        width:60%;
+        position:relative;
+        font-size:15px;
+        font-weight:bold;
+        float: right;
+    }
+
+    .printSubHeader-left {
+	text-align:left;
+        position:relative;
+        width:40%;
+        float: left;
+    }
+
+    .printFooter {
+        font-size:12px;
+	text-align:left;
+        float:left;
+	width:100%;
+    }
+
+    .printBill {
+        float:left;
+        padding: 15px 0;
+        width:100%;
+    }
+
+    .billHeader {
+        height:120px;
+    }
+
+
+    .billFooter {
+        text-align: right;
+    }
+
+    .numeric {
+       text-align: right;
+    }
+
+  </style>
+<body>
+  <div class="page">
+    <div class="printHeader">
+      THEME TOURS AND TRAVELS
+    </div>
+
+    <div class="printSubHeader" >
+      <div class="printSubHeader-left">
+	Shri Krishna Niwas, D. J. Road, Vile Parle (W) MUMBAI - 400056. INDIA <br />
+	TeleFax. : +91 22 66789770
+      </div>
+      <div class="printSubHeader-right">
+	INVOICE
+      </div>
+    </div>
+
+    <div class="printBill">
+      <table width='100%' border='1px solid' cellspacing='0px' cellpading='0px'>
+	<tr class='billHeader'>
+	  <td colspan=5>
+	    <div>Client Address Details<br /></div>
+	  </td>
+	  <td colspan=3>
+	    <div>
+	      <div> Invoice No: blah </div>
+	      <div> Date: 2016-08-10 </div>
+	    </div>
+	  </td>
+	</tr>
+	<tr>
+	  <th colspan=1>Sr</th>
+	  <th colspan=4>Description</th>
+	  <th colspan=1>Basic</th>
+	  <th colspan=1>Taxes</th>
+	  <th colspan=1>Amount</th>
+	</tr>
+	<!-- //for loop -->
+	<tr>
+	  <td style="valign:top;"> 1 </td>
+	  <td colspan=4> pax name1, <br /> GOI-BOM-SIN-BOM </td>
+	  <td class="numeric"> 5,000</td>
+	  <td class="numeric"> 11,000 </td>
+	  <td class="numeric"> 16,000 </td>
+	</tr>
+	<tr>
+	  <td style="valign:top;"> 2 </td>
+	  <td colspan=4> pax name1, <br /> GOI-BOM-SIN-BOM </td>
+	  <td class="numeric"> 5,000</td>
+	  <td class="numeric"> 11,000 </td>
+	  <td class="numeric"> 16,000 </td>
+	</tr>
+	<!-- //end for -->
+
+	<tr>
+	  <td colspan=7 class="billFooter">Goss Total</td>
+	  <td class="numeric">16,000</td>
+	</tr>
+
+	<tr>
+	  <td colspan=7 class='billFooter'>Add: Service Tax @ 1.24</td>
+	  <td class="numeric">100</td>
+	</tr>
+
+	<tr>
+	  <td colspan=7 class='billFooter'>Less: Handling charges</td>
+	  <td class="numeric">0.00</td>
+	</tr>
+
+	<tr>
+	  <td colspan=6></td>
+	  <td colspan=1>TOTAL</td>
+	  <td colspan=1 class="numeric">16,100</td>
+	</tr>
+      </table>
+    </div>
+
+    <div class="printFooter">
+      <li>This is a `Computer Generated Document`and does not require any
+      official signature.</li>
+      <li>This represents our record of transaction with you. You are
+      requested to notify us immediately, if you find any discrepancies
+      in the document. </li>
+      <liAll payment instruments must be crossed `A/c Payee only` and in
+      favour of M/s. THEME TOURS & TRAVELS. </li>
+      <li>Penal Interest will be charged in case payment is made after due
+      date of the document. </li>
+    </div>
+  </div>
+</body>
+</html>
