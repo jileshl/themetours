@@ -155,7 +155,7 @@ class Sale(models.Model):
     is_deleted = models.BooleanField(default=False)
 
     def to_json(self):
-        return json.dumps([str(self.id), str(self.id), self.service_type.code, self.client.display_name, self.sales_transaction_no])
+        return json.dumps([str(self.id), str(self.id), self.service_type.code, self.client.display_name, self.sales_transaction_no, str(self.id)])
 
     def get_query_set(self):
         return super(Sale, self).get_query_set().filter(is_deleted=False)
