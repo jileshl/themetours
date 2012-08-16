@@ -44,6 +44,8 @@ urlpatterns = patterns('',
     url(r'^config/update_suppliers/(-?\d+)', 'themetours.views.update_supplier'),
     url(r'^config/delete_supplier/', 'themetours.views.delete_supplier'),
 
+    url(r'^print/airsales/(-?\d+)', 'themetours.views.print_airsales'),
+
     #url(r'^config/users', 'themetours.views.users'),
     #url(r'^config/json_users', 'themetours.views.json_users'),
     #url(r'^config/update_users', 'themetours.views.update_user'),

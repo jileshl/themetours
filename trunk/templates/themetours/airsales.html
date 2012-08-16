@@ -259,7 +259,14 @@
 	    },
 	    { "sTitle": "Service Name" },
 	    { "sTitle": "Client Name" },
-	    { "sTitle": "Sales Transaction No" }
+	    { "sTitle": "Sales Transaction No" },
+	    { "sTitle": "",
+	      "fnRender": function (c, val) {
+		  return "<a href='javascript:void(0)'>Print</a>";
+	      },
+	      "bSearchable": false,
+	      "bSortable": false
+	    }
 	],
     });
 
@@ -268,11 +275,18 @@
 	    return;
 	}
 
+	if ('Print' == event.target.innerHTML) {
+	    var aData = sTable.fnGetData(event.target.parentNode.parentNode);
+	    window.open('/print/airsales/'+aData[0], "Print Bill", "scrollbars=yes,menubar=no,fullscreen=no,height=600,width=800", false);
+	    return;
+	}
+
 	$(sTable.fnSettings().aoData).each(function () {
 	    $(this.nTr).removeClass('row_selected');
 	});
 
 	$(event.target.parentNode).addClass('row_selected');
+
 	var aData = sTable.fnGetData(event.target.parentNode);
 	showDialog(aData[0]);
     });

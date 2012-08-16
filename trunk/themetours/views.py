@@ -241,7 +241,7 @@ def json_sales(request):
 
     aaData = []
     for model in sales:
-        aaData.append([str(model.id), str(model.id), model.service_type.name, model.client.display_name, model.sales_transaction_no])
+        aaData.append([str(model.id), str(model.id), model.service_type.code, model.client.display_name, model.sales_transaction_no, str(model.id)])
 
     dict = {'sEcho': sEcho,
             'iTotalRecords': iTotalRecords,
@@ -511,3 +511,8 @@ def users(request):
 
 def reports(request):
     return render_to_response('themetours/reports.html')
+
+
+################################################## PRINT ##############################################################################################################
+def print_airsales(request, id):
+    return render(request, 'themetours/print_airsales.html')
