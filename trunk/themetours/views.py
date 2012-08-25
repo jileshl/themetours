@@ -83,7 +83,6 @@ def delete_service(request):
 def services(request):
     c = {}
     c.update(csrf(request))
-    print c
     return render(request, 'themetours/services.html', c)
 
 ################################ CLIENTS ####################################################
@@ -149,7 +148,6 @@ def delete_client(request):
 def clients(request):
     c = {}
     c.update(csrf(request))
-    print c
     return render(request, 'themetours/clients.html', c)
 
 ############################### SUPPLIERS ####################################################
@@ -216,13 +214,14 @@ def delete_supplier(request):
 def suppliers(request):
     c = {}
     c.update(csrf(request))
-    print c
     return render(request, 'themetours/suppliers.html', c)
 
 ############################################################ SALES ####################################################################################
 
 def sales(request):
-    return render_to_response('themetours/airsales.html')
+    c = {}
+    c.update(csrf(request))
+    return render(request, 'themetours/airsales.html', c)
 
 def json_sales(request):
     sales = Sale.objects.filter(is_deleted=False)
@@ -382,27 +381,28 @@ def update_airsale(request, id):
     return render(request, 'themetours/update_airsales.html', {'salesForm' : salesForm,
                                                                'formset': passenger_info_formset, 'id' : id})
 
-def delete_airsale(request):
+def delete_airsales(request):
     if 'POST' == request.method:
         deletedIds = []
 
         for id in request.POST.getlist('check'):
-            saleModel = Sale.objects.get(id=id)
+            salesModel = Sale.objects.get(id=id)
             passengerInfo = PassengerInfo.objects.filter(sales_transaction_no=salesModel, is_deleted=False)
 
             purchaseModels = []
             for passengerModel in passengerInfo:
-                purchaseModels.append(Purchase.objects.filter(id=passengerModel.purchase_transaction_no, is_deleted=False))
+                purchcase_models = Purchase.objects.filter(id=passengerModel.purchase_transaction_no.id, is_deleted=False)
+                purchaseModels.append(purchcase_models)
 
-                passengerModel.is_deleted = True
+                passengerModel.is_deleted=True
                 passengerModel.save()
 
             for purchaseModel in purchaseModels:
-                purchaseModel.is_deleted = True
+                purchaseModel.is_deleted=True
                 purchaseModel.save()
 
-            saleModel.is_deleted = True
-            saleModel.save()
+            salesModel.is_deleted = True
+            salesModel.save()
             deletedIds.append(id)
 
         return HttpResponse(json.dumps(deletedIds), content_type='application/json')
@@ -472,7 +472,6 @@ def update_airpurchases(request, id):
 def purchases(request):
     c = {}
     c.update(csrf(request))
-    print c
     return render(request, 'themetours/purchases.html', c)
 
 def json_purchases(request):
