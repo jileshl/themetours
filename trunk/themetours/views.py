@@ -277,24 +277,16 @@ def update_airsale(request, id):
             salesForm = SaleForm(request.POST, instance=Sale.objects.get(id=id, is_deleted=False), prefix='s')
             passenger_info_formset = PassengerFormSet(request.POST)
 
+        airpassengerInfo_ids = []
         if salesForm.is_valid() and passenger_info_formset.is_valid():
             salesModel = salesForm.save(commit=False)
             salesModel.sales_transaction_no = salesModel.service_type.name+ '/'+ str(salesModel.id)
 
-            airpassengerInfo_ids = []
             for form in passenger_info_formset.forms:
                 try:
                     passenger_info = form.save(commit=False)
                 except e:
                     raise form.ValidationError(e.__str__)
-
-                if passenger_info.id is not None:
-                    airpassengerInfo_ids.append(passenger_info.id)
-
-                deletedModels = PassengerInfo.objects.filter(sales_transaction_no=salesModel).exclude(id__in=airpassengerInfo_ids)
-                for dPmodels in deletedModels:
-                    dPmodels.is_deleted = True;
-                    dPmodels.save()
 
                 try:
                     purchaseModel = Purchase.objects.get(supplier=passenger_info.supplier, sales=salesModel, is_deleted=False)
@@ -341,8 +333,16 @@ def update_airsale(request, id):
                     passenger_info.sales_transaction_no = salesModel
                     passenger_info.save()
 
+                    airpassengerInfo_ids.append(passenger_info.id)
+
                 except ValueError as e:
                     raise form.ValidationError(e.__str__)
+
+            deletedModels = PassengerInfo.objects.filter(sales_transaction_no=salesModel).exclude(id__in=airpassengerInfo_ids)
+            print deletedModels;
+            for dPmodels in deletedModels:
+                dPmodels.is_deleted = True;
+                dPmodels.save()
 
             return HttpResponse(salesModel.to_json(), content_type='application/json', status=200)
 
@@ -376,10 +376,11 @@ def update_airsale(request, id):
             service = Service.objects.get(id=saleModel.service_type.id)
 
             salesForm = SaleForm(instance=saleModel, prefix='s', initial={'service_tax_per':service.service_tax, 'education_cess_per': service.education_cess, 'higher_secondary_per': service.higher_secondary})
-            passenger_info_formset = PassengerFormSet(queryset=PassengerInfo.objects.filter(sales_transaction_no = id, is_deleted=False))
+            passenger_info_formset = PassengerFormSet(queryset=PassengerInfo.objects.filter(sales_transaction_no=id, is_deleted=False))
 
     return render(request, 'themetours/update_airsales.html', {'salesForm' : salesForm,
-                                                               'formset': passenger_info_formset, 'id' : id})
+                                                               'formset': passenger_info_formset,
+                                                               'id' : id})
 
 def delete_airsales(request):
     if 'POST' == request.method:
