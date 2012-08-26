@@ -1,4 +1,5 @@
 import logging
+from decimal import *
 from django.core.serializers.json import DjangoJSONEncoder
 from themetours.utils import get_datatables_records
 from django.shortcuts import render_to_response, get_object_or_404, render
@@ -12,6 +13,7 @@ from django.forms.models import model_to_dict, modelformset_factory, BaseModelFo
 
 from django.forms import formsets
 from django.forms.formsets import formset_factory, BaseFormSet
+
 
 from themetours.forms import ServiceForm, ClientForm, SupplierForm, SaleForm, PurchaseForm, PassengerInfoForm
 from themetours.models import Client, Supplier, Purchase, Service, Sale, PassengerInfo, creditNote, debitNote
@@ -339,7 +341,6 @@ def update_airsale(request, id):
                     raise form.ValidationError(e.__str__)
 
             deletedModels = PassengerInfo.objects.filter(sales_transaction_no=salesModel).exclude(id__in=airpassengerInfo_ids)
-            print deletedModels;
             for dPmodels in deletedModels:
                 dPmodels.is_deleted = True;
                 dPmodels.save()
@@ -515,4 +516,18 @@ def reports(request):
 
 ################################################## PRINT ##############################################################################################################
 def print_airsales(request, id):
-    return render(request, 'themetours/print_airsales.html')
+    saleModel = Sale.objects.get(is_deleted=False, id=id)
+    paxInfo = PassengerInfo.objects.filter(is_deleted=False, sales_transaction_no=saleModel)
+    gross = Decimal(0.00)
+    gross_tax = Decimal(0.00)
+
+    for pax in paxInfo:
+        gross = gross + pax.basic_fare + pax.airline_taxes
+
+    gross = gross + saleModel.additional_service_charge
+    gross_tax = saleModel.service_tax + saleModel.education_cess + saleModel.higher_secondary
+    return render(request, 'themetours/print_airsales.html', {'client':saleModel.client,
+                                                              'sale':saleModel,
+                                                              'paxInfo': paxInfo,
+                                                              'gross': gross,
+                                                              'tax': gross_tax})
