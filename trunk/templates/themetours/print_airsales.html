@@ -83,58 +83,87 @@
       <table width='100%' border='1px solid' cellspacing='0px' cellpading='0px'>
 	<tr class='billHeader'>
 	  <td colspan=5>
-	    <div>Client Address Details<br /></div>
+	    <div>
+	      {{ client.display_name }}<br />
+	      {{ client.address_line1 }}<br />
+	      {{ client.address_line2 }}<br />
+	      {{ client.city }}, {{ client.state }}<br />
+	      {{ client.country }}, {{ client.zip }}<br />
+	      <br />
+	      Email: <a href='mailto:{{ client.email }}'>{{ client.email }}</a><br />
+	      <br />
+	      Reference: {{ client.reference_name }}<br />
+	    </div>
 	  </td>
 	  <td colspan=3>
 	    <div>
-	      <div> Invoice No: blah </div>
-	      <div> Date: 2016-08-10 </div>
+	      <div> Invoice No: {{ sale.sales_transaction_no }} </div>
+	      <div> Date: {{ sale.sales_date }} </div>
 	    </div>
 	  </td>
 	</tr>
 	<tr>
 	  <th colspan=1>Sr</th>
 	  <th colspan=4>Description</th>
-	  <th colspan=1>Basic</th>
-	  <th colspan=1>Taxes</th>
-	  <th colspan=1>Amount</th>
+	  <th colspan=3>Amount</th>
 	</tr>
-	<!-- //for loop -->
+
+	{% for pax in paxInfo %}
 	<tr>
-	  <td style="valign:top;"> 1 </td>
-	  <td colspan=4> pax name1, <br /> GOI-BOM-SIN-BOM </td>
-	  <td class="numeric"> 5,000</td>
-	  <td class="numeric"> 11,000 </td>
-	  <td class="numeric"> 16,000 </td>
+	  <td style="valign:top;"> {{ forloop.counter }} </td>
+	  <td colspan=4> {{ pax.pax_name }} <br />
+	    {{pax.sector_from1 }} - {{ pax.sector_to1 }}
+
+	    {% if pax.sector_from2 %}
+	     - {{ pax.sector_from2 }} - {{ pax.sector_to2 }}
+	    {% endif %}
+
+	    {% if pax.sector_from3 %}
+	    - {{ pax.sector_from3 }} - {{ pax.sector_to3 }}
+	    {% endif %}
+
+	    {% if pax.sector_from4 %}
+	    - {{ pax.sector_from4 }} - {{ pax.sector_to4 }}
+	    {% endif %}
+
+	    {% if pax.sector_from5 %}
+	    - {{ pax.sector_from5 }} - {{ pax.sector_to5 }}
+	    {% endif %}
+
+	    {% if pax.sector_from6 %}
+	    - {{ pax.sector_from6 }} - {{ pax.sector_to6 }}
+	    {% endif %}
+
+	  </td>
+	  <td colspan = 3 class="numeric">
+	    {% if 1 == forloop.counter %}
+	    {{ pax.basic_fare|add:pax.airline_taxes|add:sale.additional_service_charge }}
+	    {% else %}
+	    {{ pax.basic_fare|add:pax.airline_taxes }}
+	    {% endif %}
+	  </td>
 	</tr>
-	<tr>
-	  <td style="valign:top;"> 2 </td>
-	  <td colspan=4> pax name1, <br /> GOI-BOM-SIN-BOM </td>
-	  <td class="numeric"> 5,000</td>
-	  <td class="numeric"> 11,000 </td>
-	  <td class="numeric"> 16,000 </td>
-	</tr>
-	<!-- //end for -->
+	{% endfor %}
 
 	<tr>
-	  <td colspan=7 class="billFooter">Goss Total</td>
-	  <td class="numeric">16,000</td>
+	  <td colspan=7 class="billFooter">Gross Total</td>
+	  <td class="numeric"> {{ gross }}</td>
 	</tr>
 
 	<tr>
 	  <td colspan=7 class='billFooter'>Add: Service Tax @ 1.24</td>
-	  <td class="numeric">100</td>
+	  <td class="numeric">{{ tax }}</td>
 	</tr>
 
 	<tr>
 	  <td colspan=7 class='billFooter'>Less: Handling charges</td>
-	  <td class="numeric">0.00</td>
+	  <td class="numeric">{{ sale.discount }} </td>
 	</tr>
 
 	<tr>
-	  <td colspan=6></td>
-	  <td colspan=1>TOTAL</td>
-	  <td colspan=1 class="numeric">16,100</td>
+	  <td colspan='6' style='border:1px solid'></td>
+	  <td colspan=1 style='border-left:none'>TOTAL</td>
+	  <td colspan=1 class="numeric"> {{ sale.total }} </td>
 	</tr>
       </table>
     </div>
