@@ -218,26 +218,32 @@ class PassengerInfo(models.Model):
     sector_from1 = models.CharField(max_length=5)
     sector_to1 = models.CharField(max_length=5)
     travel_date1 = models.DateField()
+    airline_name1 = models.CharField(max_length=3)
 
     sector_from2 = models.CharField(max_length=5, blank=True, null=True)
     sector_to2 = models.CharField(max_length=5, blank=True, null=True)
     travel_date2 = models.DateField(blank=True, null=True)
+    airline_name2 = models.CharField(max_length=3, blank=True, null=True)
 
     sector_from3 = models.CharField(max_length=5, blank=True, null=True)
     sector_to3 = models.CharField(max_length=5, blank=True, null=True)
     travel_date3 = models.DateField(blank=True, null=True)
+    airline_name3 = models.CharField(max_length=3, blank=True, null=True)
 
     sector_from4 = models.CharField(max_length=5, blank=True, null=True)
     sector_to4 = models.CharField(max_length=5, blank=True, null=True)
     travel_date4 = models.DateField(blank=True, null=True)
+    airline_name4 = models.CharField(max_length=3, blank=True, null=True)
 
     sector_from5 = models.CharField(max_length=5, blank=True, null=True)
     sector_to5 = models.CharField(max_length=5, blank=True, null=True)
     travel_date5 = models.DateField(blank=True, null=True)
+    airline_name5 = models.CharField(max_length=3, blank=True, null=True)
 
     sector_from6 = models.CharField(max_length=5, blank=True, null=True)
     sector_to6 = models.CharField(max_length=5, blank=True, null=True)
     travel_date6 = models.DateField(blank=True, null=True)
+    airline_name6 = models.CharField(max_length=3, blank=True, null=True)
 
     basic_fare = models.DecimalField(max_digits=19, decimal_places=2)
     airline_taxes = models.DecimalField(max_digits=19, decimal_places=2)
