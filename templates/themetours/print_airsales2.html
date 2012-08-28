@@ -1,0 +1,227 @@
+<html>
+  <style>
+    body {
+	display:block;
+	font-size: 12pt;
+	height: 350mm;
+	width: 250mm;
+    }
+
+    .print {
+	height:100%;
+	width: 100%;
+        border: 1px solid;
+    }
+
+    .content {
+        margin: 10mm 20mm;
+    }
+
+    .header {
+	font-size:22px;
+	font-weight:bold;
+    }
+
+    .subHeader, .invoiceInfo {
+	font-size:11px;
+	display:inline;
+    }
+
+    .subHeader-right, .invoiceInfo-right {
+	text-align:right;
+        width:30%;
+        position:relative;
+        float: right;
+	font-size: 15px;
+    }
+
+    .subHeader-right {
+        font-size:20px;
+        font-weight:bold;
+    }
+
+    .invoiceInfo-left {
+	font-size: 15px;
+    }
+
+    .subHeader-left, .invoiceInfo-left {
+	text-align:left;
+        position:relative;
+        width:70%;
+        float: left;
+    }
+
+    .bill {
+        display:block;
+        height: 60%;
+        width: 100%;
+        float: left;
+    }
+
+    .billInfo, .billInfo-item {
+        margin-top:3px;
+        display:inline;
+        width: 100%;
+	float: left;
+    }
+
+    .billInfo-item {
+       padding-top:5px;
+       font-size: 11pt;
+    }
+
+    .ticketNo {
+        width: 25%;
+        padding-left: 8px;
+	float: left;
+    }
+
+    .passenger-name {
+        width: 60%;
+	float: left;
+    }
+
+    .calculation label {
+       text-align: left;
+    }
+
+    .calculation, .footer-total-label  {
+        width: 9%;
+    }
+
+    .calculation, .footer-total-label {
+	float: left;
+        text-align: right;
+    }
+
+    .bill-tax, .bill-footer, .footer {
+        width: 100%;
+	float: left;
+    }
+
+    .bill-tax {
+	padding-top: 20px;
+    }
+
+    .bill-tax-label {
+	text-align: left;
+	float: right;
+	width: 60%;
+	padding-right: 50px;
+    }
+
+    .bill-tax-total {
+	float: right;
+        text-align: right;
+    }
+
+    .numToWord {
+        width: 78%;
+        padding-left: 8px;
+	float:left;
+	text-align:left;
+    }
+  </style>
+<body>
+  <div class="print">
+    <div class="content">
+      <div class="header">
+	<label>THEME TOURS AND TRAVELS</label>
+	<div class="subHeader" >
+	  <div class="subHeader-left">
+	    <strong>Shri Krishna Niwas, D. J. Road, Vile Parle (W) MUMBAI - 400056. INDIA</strong> <br />
+	    Tele : <strong>+91 22 66789770</strong>
+	  </div>
+	  <div class="subHeader-right">INVOICE</div>
+	</div>
+      </div>
+      <div class="invoiceInfo">
+	<div> <br/> &nbsp; <hr /> <br/></div>
+	<div class="invoiceInfo-left">
+	  {{ client.display_name }}<br />
+	  {{ client.address_line1 }}<br />
+	  {{ client.address_line2 }}<br />
+	  {{ client.city }}, {{ client.state }}<br />
+	  {{ client.country }}, {{ client.zip }}<br />
+	</div>
+	<div class="invoiceInfo-right">
+	  <div> Invoice No: {{ sale.sales_transaction_no }} </div>
+	  <div> Date: {{ sale.sales_date }} </div>
+	</div>
+      </div>
+
+      <div class="bill">
+	<div class="billInfo">
+	  &nbsp; <hr />
+	  <div class="ticketNo"><label>Ticket No</label></div>
+	  <div class="passenger-name"><label>Passenger Name</label></div>
+	  <div class="calculation"><label>Amount(Rs)</label></div>
+	  &nbsp; <hr />
+	</div>
+	{% for pax in paxInfo %}
+	<div class="billInfo-item">
+	  <div class="ticketNo">{{ pax.transaction_no }}</div>
+	  <div class="passenger-name">
+	    {{ pax.pax_name }} <br />
+	    {{pax.sector_from1 }} - {{ pax.sector_to1}}&nbsp;{{pax.airline_name1}}&nbsp;{{pax.travel_date1|date:"D d M Y"}}
+
+	    {% if pax.sector_from2 %}
+	    <br /> {{ pax.sector_from2 }} - {{ pax.sector_to2 }}&nbsp;{{ pax.airline_name2 }}&nbsp;{{pax.travel_date2|date:"D d M Y"}}
+	    {% endif %}
+
+	    {% if pax.sector_from3 %}
+	    <br /> {{ pax.sector_from3 }} - {{ pax.sector_to3 }}&nbsp;{{ pax.airline_name3 }}&nbsp;{{pax.travel_date3|date:"D d M Y"}}
+	    {% endif %}
+
+	    {% if pax.sector_from4 %}
+	    <br /> {{ pax.sector_from4 }} - {{ pax.sector_to4 }}&nbsp;{{ pax.airline_name4 }}&nbsp;{{pax.travel_date4|date:"D d M Y"}}
+	    {% endif %}
+
+	    {% if pax.sector_from5 %}
+	    <br /> {{ pax.sector_from5 }} - {{ pax.sector_to5 }}&nbsp;{{ pax.airline_name5 }}&nbsp;{{pax.travel_date5|date:"D d M Y"}}
+	    {% endif %}
+
+	    {% if pax.sector_from6 %}
+	    <br /> {{ pax.sector_from6 }} - {{ pax.sector_to6 }}&nbsp;{{ pax.airline_name6 }}&nbsp;{{pax.travel_date6|date:"D d M Y"}}
+	    {% endif %}
+	  </div>
+	  <div class="calculation">
+	    {% if 1 == forloop.counter %}
+	    {{ pax.basic_fare|add:pax.airline_taxes|add:sale.additional_service_charge|floatformat:2 }}
+	    {% else %}
+	    {{ pax.basic_fare|add:pax.airline_taxes|floatformat:2}}
+	    {% endif %}
+	  </div>
+	</div>
+	{% endfor %}
+	<div class="bill-tax">
+	<div class="bill-tax-label">
+	Add S.Tax {{sale.service_tax|floatformat:2}} + Edu.Cess {{ sale.education_cess|floatformat:2}} + H.S. Cess {{ sale.higher_secondary|floatformat:2 }}
+	<div class="bill-tax-total"> {{ tax|add:sale.round_off|floatformat:2 }}</div>
+	</div>
+	</div>
+      </div>
+
+      <div class="bill-footer">
+	&nbsp;<hr />
+	<div class="numToWord">
+	  {% load numToword %}
+	  {{ sale.total|numToINR }}
+	</div>
+	<div class="footer-total-label"> Total Rs.</div>
+	<div class="calculation"> {{ sale.total|floatformat:2 }} </div>
+	&nbsp;<hr />
+      </div>
+
+      <div class="footer">
+	<strong>E & O.E. </strong><br />
+	<li>This is a 'Computer Generated Document' and does not require any official signature.</li>
+	<li>You are requested to notify us immediately, if you find any discrepancies in the document. </li>
+	<li>All payment must be crossed <strong>A/c Payee only</strong> and in favour of <b>M/s. THEME TOURS &amp; TRAVELS.</b></li>
+	<li>Penal Interest will be charged in case payment is made after due date of the document. </li>
+	<li>Service Tax Reg No: AAHFT6849F5D001</li>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
