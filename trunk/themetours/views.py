@@ -526,7 +526,7 @@ def print_airsales(request, id):
 
     gross = gross + saleModel.additional_service_charge
     gross_tax = saleModel.service_tax + saleModel.education_cess + saleModel.higher_secondary
-    return render(request, 'themetours/print_airsales.html', {'client':saleModel.client,
+    return render(request, 'themetours/print_airsales2.html', {'client':saleModel.client,
                                                               'sale':saleModel,
                                                               'paxInfo': paxInfo,
                                                               'gross': gross,
