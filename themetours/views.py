@@ -1,4 +1,6 @@
 import logging
+import copy
+
 from decimal import *
 from django.core.serializers.json import DjangoJSONEncoder
 from themetours.utils import get_datatables_records
@@ -271,15 +273,18 @@ def update_airsale(request, id):
                                                        'purchase_transaction_no')
                                             )
     if 'POST' == request.method:
-        if ('-1' == id):
+        sale_instance, sale_created = Sale.objects.get_or_create(id=id, is_deleted=False)
+        if sale_created: #If sale_created means id == '-1'
             salesForm = SaleForm(request.POST, prefix='s')
             passenger_info_formset = PassengerFormSet(request.POST)
 
         else:
-            salesForm = SaleForm(request.POST, instance=Sale.objects.get(id=id, is_deleted=False), prefix='s')
+            salesForm = SaleForm(request.POST, instance=copy.deepcopy(sale_instance), prefix='s')
             passenger_info_formset = PassengerFormSet(request.POST)
 
         airpassengerInfo_ids = []
+        purchase_model_ids = []
+
         if salesForm.is_valid() and passenger_info_formset.is_valid():
             salesModel = salesForm.save(commit=False)
             salesModel.sales_transaction_no = salesModel.service_type.name+ '/'+ str(salesModel.id)
@@ -303,7 +308,9 @@ def update_airsale(request, id):
                     purchaseModel.round_off = 0
                     purchaseModel.total = 0.0
 
-                if (None !=  purchaseModel):
+                print sale_instance.total != salesModel.total;
+
+                if purchaseModel and False == sale_created and sale_instance.total != salesModel.total:
                     purchaseModel.supplier = passenger_info.supplier
                     purchaseModel.service_tax = 0.0
                     purchaseModel.education_cess = 0.0
@@ -330,6 +337,7 @@ def update_airsale(request, id):
 
                     purchaseModel.purchase_transaction_no = 'P-'+purchaseModel.sales.service_type.code+'/'+str(purchaseModel.id)
                     purchaseModel.save()
+                    purchase_model_ids.append(purchaseModel.id);
 
                     passenger_info.purchase_transaction_no = purchaseModel
                     passenger_info.sales_transaction_no = salesModel
@@ -344,6 +352,11 @@ def update_airsale(request, id):
             for dPmodels in deletedModels:
                 dPmodels.is_deleted = True;
                 dPmodels.save()
+
+            deletedPurchaseModels = Purchase.objects.filter(sales=salesModel).exclude(id__in=purchase_model_ids)
+            for deletedPurchaseModel in deletedPurchaseModels:
+                deletedPurchaseModel.is_deleted = True;
+                deletedPurchaseModel.save()
 
             return HttpResponse(salesModel.to_json(), content_type='application/json', status=200)
 
