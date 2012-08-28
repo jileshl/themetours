@@ -103,35 +103,35 @@
 	  </td>
 	</tr>
 	<tr>
-	  <th colspan=1>Sr</th>
+	  <th colspan=1>Ticket No</th>
 	  <th colspan=4>Description</th>
 	  <th colspan=3>Amount</th>
 	</tr>
 
 	{% for pax in paxInfo %}
 	<tr>
-	  <td style="valign:top;"> {{ forloop.counter }} </td>
+	  <td style="valign:top;"> {{ pax.transaction_no }} </td>
 	  <td colspan=4> {{ pax.pax_name }} <br />
-	    {{pax.sector_from1 }} - {{ pax.sector_to1 }}
+	    {{pax.sector_from1 }} - {{ pax.sector_to1 }}&nbsp;{{ pax.airline_name1 }}
 
 	    {% if pax.sector_from2 %}
-	     - {{ pax.sector_from2 }} - {{ pax.sector_to2 }}
+	    <br /> {{ pax.sector_from2 }} - {{ pax.sector_to2 }}&nbsp;{{ pax.airline_name2 }}
 	    {% endif %}
 
 	    {% if pax.sector_from3 %}
-	    - {{ pax.sector_from3 }} - {{ pax.sector_to3 }}
+	    <br /> {{ pax.sector_from3 }} - {{ pax.sector_to3 }}&nbsp;{{ pax.airline_name3 }}
 	    {% endif %}
 
 	    {% if pax.sector_from4 %}
-	    - {{ pax.sector_from4 }} - {{ pax.sector_to4 }}
+	    <br /> {{ pax.sector_from4 }} - {{ pax.sector_to4 }}&nbsp;{{ pax.airline_name4 }}
 	    {% endif %}
 
 	    {% if pax.sector_from5 %}
-	    - {{ pax.sector_from5 }} - {{ pax.sector_to5 }}
+	    <br /> {{ pax.sector_from5 }} - {{ pax.sector_to5 }}&nbsp;{{ pax.airline_name5 }}
 	    {% endif %}
 
 	    {% if pax.sector_from6 %}
-	    - {{ pax.sector_from6 }} - {{ pax.sector_to6 }}
+	    <br /> {{ pax.sector_from6 }} - {{ pax.sector_to6 }}&nbsp;{{ pax.airline_name6 }}
 	    {% endif %}
 
 	  </td>
@@ -161,14 +161,16 @@
 	</tr>
 
 	<tr>
-	  <td colspan='6' style='border:1px solid'></td>
-	  <td colspan=1 style='border-left:none'>TOTAL</td>
+	  {% load numToword %}
+	  <td colspan='6'>{{ sale.total|numToINR }} </td>
+	  <td colspan='1' style="border-left:none">TOTAL</td>
 	  <td colspan=1 class="numeric"> {{ sale.total }} </td>
 	</tr>
       </table>
     </div>
 
     <div class="printFooter">
+      <strong>E & O.E. </strong><br />
       <li>This is a 'Computer Generated Document' and does not require any official signature.</li>
       <li>You are requested to notify us immediately, if you find any discrepancies in the document. </li>
       <li>All payment instruments must be crossed <strong>A/c Payee only</strong> and in favour of <b>M/s. THEME TOURS &amp; TRAVELS.</b></li>
