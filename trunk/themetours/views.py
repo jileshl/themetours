@@ -519,6 +519,20 @@ def json_purchases(request):
 
     return HttpResponse(json.dumps(dict), content_type='application/json')
 
+def purchaseSaleInfo(request, purchase_id):
+    passengers_info = PassengerInfo.objects.filter(purchase_transaction_no__id=purchase_id, is_deleted=False)
+
+    passengers_dict = {}
+    for passenger_info in passengers_info:
+        info_dict = {}
+        info_dict['Transaction No'] = passenger_info.transaction_no
+        info_dict['Pax Name'] = passenger_info.pax_name
+        info_dict['Basic Fare'] = str(passenger_info.basic_fare)
+        info_dict['Airline Taxes'] = str(passenger_info.airline_taxes)
+        passengers_dict[passenger_info.id] = info_dict
+
+    return HttpResponse(json.dumps(passengers_dict), content_type='application/json')
+
 ################################################################################################################################################################
 def users(request):
     return render_to_response('themetours/users.html')

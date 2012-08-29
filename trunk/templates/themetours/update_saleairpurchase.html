@@ -1,55 +1,79 @@
-<script>
-
-</script>
-
 <form id="id_air_purchase" method="post">{% csrf_token %}
 {% for form in purchaseForm %}
-<table>
-  <th>
-    {{ form.purchase_transaction_no.label_tag }}
-  </th>
-  <td>
-    {{ form.purchase_transaction_no.value }}
-    {{ form.purchase_transaction_no }}
-  </td>
-</tr>
-<tr>
-  <th> {{ form.supplier.label_tag }}</th>
-  <td> {{ form.supplier }}</td>
-</tr>
-<tr>
-  <th> {{ form.service_tax.label_tag }} </th>
-  <td> {{ form.service_tax }} </td>
-</tr>
-<tr>
-  <th>
-    {{ form.education_cess.label_tag }}
-  </th>
-  <td> {{ form.education_cess }} </td>,
-</tr>
-<tr>
-  <th> {{ form.higher_secondary.label_tag }} </th>
-  <td> {{ form.higher_secondary }} </td>
-</tr>
-<tr>
-  <th> {{ form.tds.label_tag }} </th>
-  <td> {{ form.tds }} </td>
-</tr>
-<tr>
-  <th> {{ form.discount.label_tag }} </th>
-  <td> {{ form.discount }} </td>
-</tr>
-<tr>
-  <th> {{ form.round_off.label_tag }}</th>
-  <td> {{ form.round_off }} </td>
-  {{ form.id }}
-</tr>
-<tr>
-  <th> {{ form.total.label_tag }}</th>
-  <td> {{ form.total }} </td>
-  {{ form.id }}
-</tr>
-</table>
-{% endfor %}
-{{ purchaseForm.management_form }}
+  <div style="float:left;width:60%;%">
+    <table>
+      <tr>
+	<th>
+	  {{ form.purchase_transaction_no.label_tag }}
+	</th>
+	<td>
+	  {{ form.purchase_transaction_no.value }}
+	  {{ form.purchase_transaction_no }}
+	</td>
+      </tr>
+      <tr>
+	<th> {{ form.supplier.label_tag }}</th>
+	<td> {{ form.supplier }}</td>
+      </tr>
+      <tr>
+	<th> {{ form.service_tax.label_tag }} </th>
+	<td> {{ form.service_tax }} </td>
+      </tr>
+      <tr>
+	<th>
+	  {{ form.education_cess.label_tag }}
+	</th>
+	<td> {{ form.education_cess }} </td>,
+      </tr>
+      <tr>
+	<th> {{ form.higher_secondary.label_tag }} </th>
+	<td> {{ form.higher_secondary }} </td>
+      </tr>
+      <tr>
+	<th> {{ form.tds.label_tag }} </th>
+	<td> {{ form.tds }} </td>
+      </tr>
+      <tr>
+	<th> {{ form.discount.label_tag }} </th>
+	<td> {{ form.discount }} </td>
+      </tr>
+      <tr>
+	<th> {{ form.round_off.label_tag }}</th>
+	<td> {{ form.round_off }} </td>
+	{{ form.id }}
+      </tr>
+      <tr>
+	<th> {{ form.total.label_tag }}</th>
+	<td> {{ form.total }} </td>
+	{{ form.id }}
+      </tr>
+    </table>
+  </div>
+  <div style="float:left;width:40%;">
+    <h2> Passenger Information </h2>
+    <div id="paxinfo_{{form.id.value}}"></div>
+    <script>
+    $(function() {
+	$.ajax({
+	    url: "/purchaseSaleInfo/{{form.id.value}}",
+	    context: document.body,
+	    cache: false,
+	    success: function(data){
+		$.each(data, function(k, v) {
+		    $("#paxinfo_{{form.id.value}}").append("&nbsp;<hr />");
+		    $.each(v, function(k, v) {
+			$("#paxinfo_{{form.id.value}}").append("<li>"+k+" : "+v+"</li>");
+		    });
+		});
+	    },
+	    error: function(){
+		alert('failure');
+	    }
+	});
+    });
+    </script>
+  </div>
+  <div style="float:left;width:100%">&nbsp;<hr /></div>
+  {% endfor %}
+  {{ purchaseForm.management_form }}
 </form>
