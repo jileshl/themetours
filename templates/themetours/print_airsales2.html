@@ -2,7 +2,7 @@
   <style>
     body {
 	display:block;
-	font-size: 12pt;
+	font-size: 12px;
 	height: 320mm;
 	width: 250mm;
     }
@@ -14,7 +14,7 @@
     }
 
     .content {
-        margin: 10mm 20mm;
+        margin: 5mm 20mm;
     }
 
     .header {
@@ -41,7 +41,7 @@
     }
 
     .invoiceInfo-left {
-	font-size: 15px;
+	font-size: 14px;
     }
 
     .subHeader-left, .invoiceInfo-left {
@@ -67,7 +67,7 @@
 
     .billInfo-item {
        padding-top:5px;
-       font-size: 11pt;
+       font-size: 12px;
     }
 
     .ticketNo {
@@ -76,50 +76,77 @@
 	float: left;
     }
 
+    label {
+        font-size: 14px;
+    }
+
     .passenger-name {
         width: 60%;
 	float: left;
+    }
+
+    .passenger-info {
+       font-size: 12px;
     }
 
     .calculation label {
        text-align: left;
     }
 
-    .calculation, .footer-total-label  {
-        width: 9%;
-    }
-
     .calculation, .footer-total-label {
 	float: left;
         text-align: right;
+        width: 9%;
+        margin-left:10px;
     }
 
     .bill-tax, .bill-footer, .footer {
         width: 100%;
 	float: left;
+	margin-top: 5px;
+    }
+
+    .footer {
+       font-size: 11px;
     }
 
     .bill-tax {
 	padding-top: 20px;
     }
 
-    .bill-tax-label {
-	text-align: left;
-	float: right;
-	width: 60%;
-	padding-right: 50px;
-    }
-
-    .bill-tax-total {
-	float: right;
-        text-align: right;
-    }
-
-    .numToWord {
-        width: 78%;
+    .junk {
+	width:60%;
         padding-left: 8px;
 	float:left;
 	text-align:left;
+    }
+
+    .bill-tax-label {
+	float: left;
+	text-align: right;
+	width: 25%;
+    }
+
+    .numToWord {
+        width: 75%;
+        padding-left: 8px;
+	float:left;
+	text-align:left;
+    }
+
+    .top-ruler, .bottom-ruler {
+        float:left;
+	width:100%;
+    }
+
+    .top-ruler {
+	border-bottom:2px double;
+	margin-bottom:5px;
+    }
+
+    .bottom-ruler {
+	border-bottom:2px double;
+	margin-top:5px;
     }
   </style>
 <body>
@@ -133,10 +160,11 @@
 	    Tele : <strong>+91 22 66789770</strong>
 	  </div>
 	  <div class="subHeader-right">INVOICE</div>
+	  <div class="bottom-ruler"> &nbsp;</div>
 	</div>
       </div>
       <div class="invoiceInfo">
-	<div> <br/> &nbsp; <hr /> <br/></div>
+	<div>&nbsp;</div>
 	<div class="invoiceInfo-left">
 	  {{ client.display_name }}<br />
 	  {{ client.address_line1 }}<br />
@@ -152,38 +180,40 @@
 
       <div class="bill">
 	<div class="billInfo">
-	  &nbsp; <hr />
+	  <div class="top-ruler"></div>
 	  <div class="ticketNo"><label>Ticket No</label></div>
 	  <div class="passenger-name"><label>Passenger Name</label></div>
 	  <div class="calculation"><label>Amount(Rs)</label></div>
-	  &nbsp; <hr />
+	  <div class="bottom-ruler"></div>
 	</div>
 	{% for pax in paxInfo %}
 	<div class="billInfo-item">
 	  <div class="ticketNo">{{ pax.transaction_no }}</div>
 	  <div class="passenger-name">
-	    {{ pax.pax_name }} <br />
-	    {{pax.sector_from1 }} - {{ pax.sector_to1}}&nbsp;{{pax.airline_name1}}&nbsp;{{pax.travel_date1|date:"D d M Y"}}
+	    {{ pax.pax_name }}
+	    <div class="passenger-info" >
+	    {{pax.sector_from1|upper }} - {{ pax.sector_to1|upper}}&nbsp;{{pax.airline_name1|upper}}&nbsp;{{pax.travel_date1|date:"D d M Y"}}
 
 	    {% if pax.sector_from2 %}
-	    <br /> {{ pax.sector_from2 }} - {{ pax.sector_to2 }}&nbsp;{{ pax.airline_name2 }}&nbsp;{{pax.travel_date2|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from2|upper }} - {{ pax.sector_to2|upper }}&nbsp;{{ pax.airline_name2|upper }}&nbsp;{{pax.travel_date2|date:"D d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from3 %}
-	    <br /> {{ pax.sector_from3 }} - {{ pax.sector_to3 }}&nbsp;{{ pax.airline_name3 }}&nbsp;{{pax.travel_date3|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from3|upper }} - {{ pax.sector_to3|upper }}&nbsp;{{ pax.airline_name3|upper }}&nbsp;{{pax.travel_date3|date:"D d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from4 %}
-	    <br /> {{ pax.sector_from4 }} - {{ pax.sector_to4 }}&nbsp;{{ pax.airline_name4 }}&nbsp;{{pax.travel_date4|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from4|upper }} - {{ pax.sector_to4|upper }}&nbsp;{{ pax.airline_name4|upper }}&nbsp;{{pax.travel_date4|date:"D d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from5 %}
-	    <br /> {{ pax.sector_from5 }} - {{ pax.sector_to5 }}&nbsp;{{ pax.airline_name5 }}&nbsp;{{pax.travel_date5|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from5|upper }} - {{ pax.sector_to5|upper }}&nbsp;{{ pax.airline_name5|upper }}&nbsp;{{pax.travel_date5|date:"D d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from6 %}
-	    <br /> {{ pax.sector_from6 }} - {{ pax.sector_to6 }}&nbsp;{{ pax.airline_name6 }}&nbsp;{{pax.travel_date6|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from6|upper }} - {{ pax.sector_to6|upper }}&nbsp;{{ pax.airline_name6|upper }}&nbsp;{{pax.travel_date6|date:"D d M Y"}}
 	    {% endif %}
+	    </div>
 	  </div>
 	  <div class="calculation">
 	    {% if 1 == forloop.counter %}
@@ -194,23 +224,31 @@
 	  </div>
 	</div>
 	{% endfor %}
-	<div class="bill-tax">
-	<div class="bill-tax-label">
-	Add S.Tax {{sale.service_tax|floatformat:2}} + Edu.Cess {{ sale.education_cess|floatformat:2}} + H.S. Cess {{ sale.higher_secondary|floatformat:2 }}
-	<div class="bill-tax-total"> {{ tax|add:sale.round_off|floatformat:2 }}</div>
-	</div>
-	</div>
       </div>
 
       <div class="bill-footer">
-	&nbsp;<hr />
+	<div class="bill-tax">
+
+	  <div class="junk">&nbsp;</div>
+	  <div class="bill-tax-label">Gross Total</div>
+	  <div class="calculation">{{ gross|floatformat:2 }}</div>
+
+	  <div class="junk">&nbsp;</div>
+	  <div class="bill-tax-label">Add: Service Tax@1.24%</div>
+	  <div class="calculation">{{ tax|add:sale.round_off|floatformat:2 }}</div>
+
+	  <div class="junk">&nbsp;</div>
+	  <div class="bill-tax-label">Less: Handling charges</div>
+	  <div class="calculation">{{ sale.discount|floatformat:2 }}</div>
+	</div>
+	<div class="top-ruler"></div>
 	<div class="numToWord">
 	  {% load numToword %}
-	  {{ sale.total|numToINR }}
+	  {{ sale.total|floatformat:0|numToINR }}
 	</div>
 	<div class="footer-total-label"> Total Rs.</div>
-	<div class="calculation"> {{ sale.total|floatformat:2 }} </div>
-	&nbsp;<hr />
+	<div class="calculation"> {{ sale.total|floatformat:0|floatformat:2 }} </div>
+	<div class="bottom-ruler"></div>
       </div>
 
       <div class="footer">
