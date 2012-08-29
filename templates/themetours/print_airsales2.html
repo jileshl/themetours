@@ -74,6 +74,7 @@
         width: 25%;
         padding-left: 8px;
 	float: left;
+	font-size: 14px;
     }
 
     label {
@@ -83,6 +84,7 @@
     .passenger-name {
         width: 60%;
 	float: left;
+	font-size: 14px;
     }
 
     .passenger-info {
@@ -98,6 +100,7 @@
         text-align: right;
         width: 9%;
         margin-left:10px;
+	font-size: 14px;
     }
 
     .bill-tax, .bill-footer, .footer {
@@ -192,26 +195,26 @@
 	  <div class="passenger-name">
 	    {{ pax.pax_name }}
 	    <div class="passenger-info" >
-	    {{pax.sector_from1|upper }} - {{ pax.sector_to1|upper}}&nbsp;{{pax.airline_name1|upper}}&nbsp;{{pax.travel_date1|date:"D d M Y"}}
+	    {{pax.sector_from1|upper }}-{{ pax.sector_to1|upper}}&nbsp;&nbsp;{{pax.airline_name1|upper}}&nbsp;&nbsp;{{pax.travel_date1|date:"d M Y"}}
 
 	    {% if pax.sector_from2 %}
-	    <br /> {{ pax.sector_from2|upper }} - {{ pax.sector_to2|upper }}&nbsp;{{ pax.airline_name2|upper }}&nbsp;{{pax.travel_date2|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from2|upper }}-{{ pax.sector_to2|upper }}&nbsp;&nbsp;{{ pax.airline_name2|upper }}&nbsp;&nbsp;{{pax.travel_date2|date:"d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from3 %}
-	    <br /> {{ pax.sector_from3|upper }} - {{ pax.sector_to3|upper }}&nbsp;{{ pax.airline_name3|upper }}&nbsp;{{pax.travel_date3|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from3|upper }}-{{ pax.sector_to3|upper }}&nbsp;&nbsp;{{ pax.airline_name3|upper }}&nbsp;&nbsp;{{pax.travel_date3|date:"d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from4 %}
-	    <br /> {{ pax.sector_from4|upper }} - {{ pax.sector_to4|upper }}&nbsp;{{ pax.airline_name4|upper }}&nbsp;{{pax.travel_date4|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from4|upper }}-{{ pax.sector_to4|upper }}&nbsp;&nbsp;{{ pax.airline_name4|upper }}&nbsp;&nbsp;{{pax.travel_date4|date:"d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from5 %}
-	    <br /> {{ pax.sector_from5|upper }} - {{ pax.sector_to5|upper }}&nbsp;{{ pax.airline_name5|upper }}&nbsp;{{pax.travel_date5|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from5|upper }}-{{ pax.sector_to5|upper }}&nbsp;{{ pax.airline_name5|upper }}&nbsp;{{pax.travel_date5|date:"d M Y"}}
 	    {% endif %}
 
 	    {% if pax.sector_from6 %}
-	    <br /> {{ pax.sector_from6|upper }} - {{ pax.sector_to6|upper }}&nbsp;{{ pax.airline_name6|upper }}&nbsp;{{pax.travel_date6|date:"D d M Y"}}
+	    <br /> {{ pax.sector_from6|upper }}-{{ pax.sector_to6|upper }}&nbsp;&nbsp;{{ pax.airline_name6|upper }}&nbsp;&nbsp;{{pax.travel_date6|date:"d M Y"}}
 	    {% endif %}
 	    </div>
 	  </div>
