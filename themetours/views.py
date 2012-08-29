@@ -273,12 +273,13 @@ def update_airsale(request, id):
                                                        'purchase_transaction_no')
                                             )
     if 'POST' == request.method:
-        sale_instance, sale_created = Sale.objects.get_or_create(id=id, is_deleted=False)
-        if sale_created: #If sale_created means id == '-1'
+        sale_instance = None
+        if '-1' == id:
             salesForm = SaleForm(request.POST, prefix='s')
             passenger_info_formset = PassengerFormSet(request.POST)
 
         else:
+            sale_instance = Sale.objects.get(id=id, is_deleted=False)
             salesForm = SaleForm(request.POST, instance=copy.deepcopy(sale_instance), prefix='s')
             passenger_info_formset = PassengerFormSet(request.POST)
 
@@ -289,7 +290,9 @@ def update_airsale(request, id):
             salesModel = salesForm.save(commit=False)
             salesModel.sales_transaction_no = salesModel.service_type.name+ '/'+ str(salesModel.id)
 
+            count = 0;
             for form in passenger_info_formset.forms:
+                ++count;
                 try:
                     passenger_info = form.save(commit=False)
                 except e:
@@ -306,11 +309,10 @@ def update_airsale(request, id):
                     purchaseModel.tds = 0
                     purchaseModel.discount = 0
                     purchaseModel.round_off = 0
+                    purchaseModel.purchase_actual = passenger_info.basic_fare + passenger_info.airline_taxes;
                     purchaseModel.total = 0.0
 
-                print sale_instance.total != salesModel.total;
-
-                if purchaseModel and False == sale_created and sale_instance.total != salesModel.total:
+                if purchaseModel and sale_instance and sale_instance.total != salesModel.total:
                     purchaseModel.supplier = passenger_info.supplier
                     purchaseModel.service_tax = 0.0
                     purchaseModel.education_cess = 0.0
@@ -319,6 +321,11 @@ def update_airsale(request, id):
                     purchaseModel.discount = 0
                     purchaseModel.round_off = 0
                     purchaseModel.total = 0.0
+
+                if 1 == count:
+                    purchaseModel.purchase_actual = passenger_info.basic_fare + passenger_info.airline_taxes;
+                else:
+                    purchaseModel.purchase_actual = purchaseModel.purchase_actual + passenger_info.basic_fare + passenger_info.airline_taxes;
 
                 purchaseForm = PurchaseForm(instance=purchaseModel)
                 pmodel = purchaseForm.save(commit=False)

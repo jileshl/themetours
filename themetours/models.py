@@ -185,8 +185,9 @@ class Purchase(models.Model):
     discount = models.DecimalField(max_digits=19, decimal_places=2, blank=True)
     round_off = models.DecimalField(max_digits=19, decimal_places=2, blank=True)
     when_date =  models.DateTimeField(auto_now = True, auto_now_add=True)
-    is_deleted = models.BooleanField(default=False)
+    purchase_actual = models.DecimalField(max_digits=19, decimal_places=2, blank=False)
     total = models.DecimalField(max_digits=19, decimal_places=2, blank=True)
+    is_deleted = models.BooleanField(default=False)
 
     # ...
     def __unicode__(self):
