@@ -1,3 +1,26 @@
+<script>
+    function calculate_servicetax(btn) {
+	var item_name = btn.attributes[0].value;
+	var totalTaxValue = getVal("#id_"+item_name+"-totalTax");
+	alert("#id_"+item_name+"-totalTax");
+	alert(totalTaxValue);
+	$("#id_"+item_name+"-service_tax").val((totalTaxValue / 90.19).toFixed(2));
+	$("#id_"+item_name+"-education_cess").val((totalTaxValue / 100.19).toFixed(2));
+	$("#id_"+item_name+"-higher_secondary").val((totalTaxValue / 110.19).toFixed(2));
+	$("#id_"+item_name+"-tds").val((totalTaxValue / 150.19).toFixed(2));
+
+	return false;
+    }
+  $(document).ready(
+      function() {
+	  $(".total-button").button({
+	      text: "Calulate Total",
+	  }).click(function() {
+	      return calculate_servicetax(this);
+	  });
+      });
+</script>
+
 <form id="id_air_purchase" method="post">{% csrf_token %}
 {% for form in purchaseForm %}
   <div style="float:left;width:60%;%">
@@ -46,6 +69,10 @@
 	<th> {{ form.total.label_tag }}</th>
 	<td> {{ form.total }} </td>
 	{{ form.id }}
+      </tr>
+      <tr>
+        <td> Total Tax : <input type="text" value="" id="id_form-{{forloop.counter|add:"-1"}}-totalTax" /> </td>
+	<td> <button class="total-button" id="form-{{forloop.counter|add:"-1"}}">Compute</button></td>
       </tr>
     </table>
   </div>
