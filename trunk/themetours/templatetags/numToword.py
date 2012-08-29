@@ -15,9 +15,9 @@ thousands = ["","thousand", "million",  "billion",  "trillion",
     "quattuordecillion",  "sexdecillion",  "septendecillion",  "octodecillion",
     "novemdecillion",  "vigintillion "]
 
-def numToWords(num, loop=0):
+def numToWords(value, loop=0):
     words = []
-
+    num = float(value)
     if num == 0:
         words.append("zero")
 
