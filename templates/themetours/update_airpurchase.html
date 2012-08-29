@@ -14,8 +14,34 @@
 
 <div id="purchasers-popup">
 <form id = "id_purchaser_form" name = "purchase_form"  method="post">{% csrf_token %}
+  <div style="float:left;width:60%;%">
   <table>
     {{ form.as_table }}
   </table>
+  </div>
+  <div style="float:left;width:40%;">
+    <h2> Passenger Information </h2>
+    <div id="paxinfo_{{id}}"></div>
+    <script>
+      $(function() {
+	$.ajax({
+	    url: "/purchaseSaleInfo/{{id}}",
+	    context: document.body,
+	    cache: false,
+	    success: function(data){
+		$.each(data, function(k, v) {
+		    $("#paxinfo_{{id}}").append("&nbsp;<hr />");
+		    $.each(v, function(k, v) {
+			$("#paxinfo_{{id}}").append("<li>"+k+" : "+v+"</li>");
+		    });
+		});
+	    },
+	    error: function(){
+		alert('failure');
+	    }
+	});
+    });
+    </script>
+  </div>
 </form>
 </div>
