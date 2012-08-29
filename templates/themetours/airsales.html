@@ -55,7 +55,7 @@
 	    total += getVal("#id_" + prefix + "-" + i + "-tds");
 	    total = total - getVal("#id_" + prefix + "-" + i + "-discount");
 	    total += getVal("#id_" + prefix + "-" + i + "-round_off");
-
+	    total = getVal("#id_"+prefix+"-"+i+"-purchase_actual") - total;
 	    $("#id_" + prefix + "-" + i + "-total").val(total.toFixed(2));
 	}
     };
@@ -94,6 +94,7 @@
 
 	$("#id_air_tax").val(tax_total.toFixed(2));
 	total += tax_total;
+	total = getVal("#id_"+prefix+"-"+i+"-purchase_actual") - total;
 	$("#id_s-total").val(total.toFixed(2));
     }
 

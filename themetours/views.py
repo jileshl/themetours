@@ -292,7 +292,7 @@ def update_airsale(request, id):
 
             count = 0;
             for form in passenger_info_formset.forms:
-                ++count;
+                count = count + 1;
                 try:
                     passenger_info = form.save(commit=False)
                 except e:
@@ -323,7 +323,9 @@ def update_airsale(request, id):
                     purchaseModel.total = 0.0
 
                 if 1 == count:
+                    purchaseModel.purchase_actual = 0;
                     purchaseModel.purchase_actual = passenger_info.basic_fare + passenger_info.airline_taxes;
+
                 else:
                     purchaseModel.purchase_actual = purchaseModel.purchase_actual + passenger_info.basic_fare + passenger_info.airline_taxes;
 
