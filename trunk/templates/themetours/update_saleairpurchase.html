@@ -2,8 +2,6 @@
     function calculate_servicetax(btn) {
 	var item_name = btn.attributes[0].value;
 	var totalTaxValue = getVal("#id_"+item_name+"-totalTax");
-	alert("#id_"+item_name+"-totalTax");
-	alert(totalTaxValue);
 	$("#id_"+item_name+"-service_tax").val((totalTaxValue / 90.19).toFixed(2));
 	$("#id_"+item_name+"-education_cess").val((totalTaxValue / 100.19).toFixed(2));
 	$("#id_"+item_name+"-higher_secondary").val((totalTaxValue / 110.19).toFixed(2));
@@ -22,6 +20,7 @@
 </script>
 
 <form id="id_air_purchase" method="post">{% csrf_token %}
+{{ form.errors }}
 {% for form in purchaseForm %}
   <div style="float:left;width:60%;%">
     <table>
@@ -64,6 +63,14 @@
 	<th> {{ form.round_off.label_tag }}</th>
 	<td> {{ form.round_off }} </td>
 	{{ form.id }}
+      </tr>
+      <tr>
+	<th>
+	  {{ form.purchase_actual.label_tag }}
+	</th>
+	<td>
+	  {{ form.purchase_actual }}
+	</td>
       </tr>
       <tr>
 	<th> {{ form.total.label_tag }}</th>
