@@ -94,7 +94,6 @@
 
 	$("#id_air_tax").val(tax_total.toFixed(2));
 	total += tax_total;
-	total = getVal("#id_"+prefix+"-"+i+"-purchase_actual") - total;
 	$("#id_s-total").val(total.toFixed(2));
     }
 

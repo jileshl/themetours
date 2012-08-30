@@ -5,10 +5,10 @@
 	$("#id_"+item_name+"-service_tax").val((totalTaxValue * 100 / 103).toFixed(2));
 	$("#id_"+item_name+"-education_cess").val((totalTaxValue * 2 / 103).toFixed(2));
 	$("#id_"+item_name+"-higher_secondary").val((totalTaxValue / 103).toFixed(2));
-	$("#id_"+item_name+"-tds").val((totalTaxValue / 150.19).toFixed(2));
-
+	calculatePurchaseTotal('form');
 	return false;
     }
+
   $(document).ready(
       function() {
 	  $(".total-button").button({
