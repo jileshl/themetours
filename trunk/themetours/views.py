@@ -259,6 +259,7 @@ class PassengerInfoFormSet(BaseModelFormSet):
         for form in self.forms:
             form.empty_permitted = True
 
+# Break this method.... to save diff kinds of PassengerInfo tables,
 def update_airsale(request, id):
     PassengerFormSet = modelformset_factory(PassengerInfo,
                                             formset=PassengerInfoFormSet,
@@ -398,7 +399,11 @@ def update_airsale(request, id):
             saleModel = Sale.objects.get(id=id)
             service = Service.objects.get(id=saleModel.service_type.id)
 
-            salesForm = SaleForm(instance=saleModel, prefix='s', initial={'service_tax_per':service.service_tax, 'education_cess_per': service.education_cess, 'higher_secondary_per': service.higher_secondary})
+            salesForm = SaleForm(instance=saleModel,
+                                 prefix='s',
+                                 initial={'service_tax_per':service.service_tax,
+                                          'education_cess_per': service.education_cess,
+                                          'higher_secondary_per': service.higher_secondary})
             passenger_info_formset = PassengerFormSet(queryset=PassengerInfo.objects.filter(sales_transaction_no=id, is_deleted=False))
 
     return render(request, 'themetours/update_airsales.html', {'salesForm' : salesForm,

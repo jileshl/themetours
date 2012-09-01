@@ -55,7 +55,7 @@
 	    total += getVal("#id_" + prefix + "-" + i + "-tds");
 	    total = total - getVal("#id_" + prefix + "-" + i + "-discount");
 	    total += getVal("#id_" + prefix + "-" + i + "-round_off");
-	    total = getVal("#id_"+prefix+"-"+i+"-purchase_actual") - total;
+	    total += getVal("#id_"+prefix+"-"+i+"-purchase_actual");
 	    $("#id_" + prefix + "-" + i + "-total").val(total.toFixed(2));
 	}
     };
