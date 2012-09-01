@@ -16,6 +16,7 @@
 	  }).click(function() {
 	      return calculate_servicetax(this);
 	  });
+          calculatePurchaseTotal('form');
       });
 </script>
 
@@ -69,6 +70,7 @@
 	  {{ form.purchase_actual.label_tag }}
 	</th>
 	<td>
+	  {{ form.purchase_actual.value }}
 	  {{ form.purchase_actual }}
 	</td>
       </tr>
