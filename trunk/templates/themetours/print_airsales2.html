@@ -180,7 +180,7 @@
 	</div>
 	<div class="invoiceInfo-right">
 	  <div> Invoice No: {{ sale.sales_transaction_no }} </div>
-	  <div> Date: {{ sale.sales_date }} </div>
+	  <div> Date: {{ sale.sales_date|date:"d M Y" }} </div>
 	</div>
       </div>
 
